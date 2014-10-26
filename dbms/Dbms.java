@@ -1,0 +1,91 @@
+/**
+ *	The Dbms is the control structure of the simulator.
+ *	It holds the Tables, which are essentially lockable
+ *	and unlockable objects with no other purpose, and starts the 
+ *	Transactions, which will have generated queries and associated 
+ *	lock requirements.  
+ *
+ *	Author: Nicholas Cummins
+ *	email: ncummins@brandeis.edu
+ *	10/25/14
+ */
+
+public abstract class Dbms{
+
+	/**
+	 * Constructs a new DBMS with a specified
+	 * number of tables.
+	 *
+	 */
+
+	public Dbms(int size){
+		this.size = size;
+		this.constructTables();
+		this.constructDependencies();
+	}
+
+	/**
+	 *	Creates enough tables to fill the list
+	 *	to the appropriate size of the Dbms.
+	 */
+
+	private void constructTables(){
+		tables = new ArrayList<Table>();
+
+		for(int i = 0; i < size; i++){
+			tables.add(new Table());
+		}
+	}
+
+	/**
+	 *	Constructs partial ordering of the tables.
+	 *
+	 */
+
+	protected abstract void constructDependencies();
+
+
+	/**
+	 * 	Gets the list of tables in the Dbms.
+	 *
+	 *	@return the List of Tables.
+	 *
+	 */
+
+	public List<Table> getTables(){
+		return tables;
+	}
+
+	/**
+	 *	Returns the locks necessary to get to a
+	 * given table.
+	 *
+	 *	@param the Table sought.
+	 *	@return the List (in order) of Tables needed.
+	 *
+	 */
+
+	public List<Table> getDependecies(Table goal){
+		return paths.get(goal);
+	}
+
+	/**
+	 *	Returns a list of lists of the dependencies of
+	 * 	a given Plan.
+	 *
+	 *	@param the Plan requiring locks
+	 *	@param the List<List<Tables>> of dependencies
+	 *
+	 */
+
+	public List<List<Tables>> getDependecies(Plan plan){
+		List<List<Tables>> dependencies = new ArrayList<ArrayList<Table>>();
+		for (Table table : plan.requiredTables()){
+			dependencies.add(this.getDependecies(table));
+		}
+		return dependencies;
+	}
+
+	private List<Table> tables;
+	private HashMap<Table, List<Table>> paths;
+}
