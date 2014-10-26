@@ -12,6 +12,9 @@
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.*;
+import Table;
+import Dbms;
+import Plan;
 
 
 public abstract class Transaction implements Runnable{
