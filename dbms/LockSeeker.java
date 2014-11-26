@@ -17,8 +17,8 @@ public abstract class LockSeeker{
 	 *
 	 */
 
-	public LockSeeker(int id, List locks, BlockingQueue obsoleteLocks,
-											BlockingQueue requiredLocks){
+	public LockSeeker(int id, List locks, BlockingQueue<Table> obsoleteLocks,
+											ConcurrentHashMap<Table,Integer> requiredLocks){
 		this.id = id;
 		this.locks = locks;
 		this.obsoleteLocks = obsoleteLocks;
@@ -43,12 +43,12 @@ public abstract class LockSeeker{
 			lastLock = lock;
 		}
 
-		requiredLocks.put(lastLock);
+		requiredLocks.put(lastLock, 1);
 	}
 
 	private int id;
 	private List locks;
-	private BlockingQueue obsoleteLocks;
-	private BlockingQueue requiredLocks;
+	private BlockingQueue<Table> obsoleteLocks;
+	private ConcurrentHashMap<Table,Integer> requiredLocks;
 	private Table lastLock;
 }
