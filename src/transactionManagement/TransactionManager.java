@@ -3,6 +3,7 @@ package transactionManagement;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.Shell;
 import database.Dbms;
 
 public class TransactionManager {	
@@ -26,7 +27,13 @@ public class TransactionManager {
 		transactionSet = new Transaction[numXactions];
 		masterLog = new ArrayList<String>();
 		
-		
+		masterLog.add(Shell.getTime() + "\t" + this.toString() + "\t" + 
+		"created transaction manager");
+	}
+	
+	@Override
+	public String toString() {
+		return "MANAGER," + numXactions + "," + writesPerXaction + "," + homogeneous;
 	}
 	
 
@@ -48,7 +55,6 @@ public class TransactionManager {
 			}
 		}
 	}
-	
 	
 	/**
 	 * Wraps all transactions in Thread, starts all transactions, and blocks on their
@@ -80,7 +86,6 @@ public class TransactionManager {
 	}
 	
 	
-	
 	/**
 	 * Queries all (completed) transactions, collects their logs (unsorted) and
 	 * reports log data.
@@ -91,7 +96,6 @@ public class TransactionManager {
 		for (Transaction t : transactionSet) {
 			masterLog.addAll(t.getLog());
 		}
-		
 		return masterLog;
 	}
 

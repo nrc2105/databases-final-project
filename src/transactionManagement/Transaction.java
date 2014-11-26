@@ -6,20 +6,18 @@ package transactionManagement;
  *	helper functions to acquire and release
  *	the necessary locks.
  *
- *	Author: Nicholas Cummins
- *	email: ncummins@brandeis.edu
- *	10/25/14
+ *	Author: Michael Partridge
  */
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lockManagement.LockManager;
+import main.Shell;
 import database.Dbms;
 import database.Table;
 
@@ -29,7 +27,7 @@ public class Transaction implements Runnable{
 	private int id;
 	private Dbms database;
 	private List<Table> requiredLocks;
-	private Map<Table, Integer> availableLocks;
+	private ConcurrentHashMap<Table, Integer> availableLocks;
 	private BlockingQueue<Table> finishedLocks;
 	private List<String> log;
 		
@@ -41,7 +39,6 @@ public class Transaction implements Runnable{
 	 *	@param the Dbms to run on.
 	 *	@param the plan of the transaction. //TODO: MIKE I NEED SOME HELP ON THIS PART
 	 */
-
 	public Transaction(int id, int size, Dbms database){
 		this.id = id;
 		this.database = database;
@@ -52,6 +49,54 @@ public class Transaction implements Runnable{
 		
 		finishedLocks = new ArrayBlockingQueue<Table>(size);
 		availableLocks = new ConcurrentHashMap<Table, Integer>();
+	}
+	
+	
+	/**
+	 *	Runs the query on the Dbms, first creating and
+	 *	starting the LockReleaser and LockSeekers.
+	 */
+	public final void run() {
+		startLocking();
+		
+		for (Table table : requiredLocks) {
+			
+			logEvent(String.format("accessing table %s", table.toString()));
+			
+			while (!availableLocks.contains(table)) {
+				// Live spin
+			}
+			
+			
+		}
+		
+
+	}
+
+	/**
+	 *	Called once at the start of a run to initialize
+	 *	helpers.
+	 * MIKE DON"T TOUCH THIS (OR IF YOU DO, ONLY ADD)
+	 */
+	private void startLocking(){
+		(new LockManager(database)).getAccess(id, requiredLocks, availableLocks, finishedLocks);	
+		
+	}
+	
+	
+	public List<String> getLog() {
+		return log;
+	}
+	
+	
+	private void logEvent(String event) {
+		log.add(String.format("%d\t%s\t%s", Shell.getTime(), this.toString(), event));
+	}
+	
+	
+	@Override
+	public String toString() {
+		return String.format("XACTION, %d", id);
 	}
 	
 	
@@ -70,34 +115,14 @@ public class Transaction implements Runnable{
 		
 		return xactionTables;
 	}
-	
-	
-	/**
-	 *	Runs the query on the Dbms, first creating and
-	 *	starting the LockReleaser and LockSeekers.
-	 */
-	public final void run() {
-		startLocking();
-		
-		// TODO: build transaction internal behavior
-		
-
-	}
-
-	/**
-	 *	Called once at the start of a run to initialize
-	 *	helpers.
-	 * MIKE DON"T TOUCH THIS (OR IF YOU DO, ONLY ADD)
-	 */
-	private void startLocking(){
-		(new LockManager(database)).getAccess(id, requiredLocks, availableLocks, finishedLocks);	
-		
-	}
-	
-	public List<String> getLog() {
-		return log;
-	}
-	
 
 	
 }
+
+
+
+
+
+
+
+
