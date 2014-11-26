@@ -39,6 +39,7 @@ public class Shell {
 		
 		return defaultParams;
 	}
+	
 	public static void printHelp(){
 		System.out.println("Don't you wish this message was more useful?");
 	}
