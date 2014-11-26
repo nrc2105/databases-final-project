@@ -10,7 +10,6 @@ package transactionManagement;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -55,8 +54,9 @@ public class Transaction implements Runnable{
 	
 
 	/**
-	 *	Runs the query on the Dbms, first creating and
-	 *	starting the LockReleaser and LockSeekers.
+	 * Runs the query on the Dbms, first creating and starting the LockReleaser
+	 * and LockSeekers, then simulating writes on each table as the lock becomes
+	 * available.
 	 */
 	public final void run() {
 		logEvent("began transaction");
