@@ -23,5 +23,10 @@ public class Shell {
 		
 		
 	}
+	
+	
+	public static long getTime() {
+		return System.currentTimeMillis();
+	}
 
 }
