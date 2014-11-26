@@ -1,10 +1,9 @@
 package database;
 
-public class BottomWeightedBHDbms extends BHDbms {
+public class BottomWeightBHDbms extends BHDbms {
 
-	public BottomWeightedBHDbms(int size) {
+	public BottomWeightBHDbms(int size) {
 		super(size);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

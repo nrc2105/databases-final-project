@@ -7,7 +7,15 @@ package database;
  */
 
  public class DbmsFactory{
- 	public static Dbms getBHDbms(int size){
- 		return new BHDbms(size);
+ 	public static Dbms getEqualWeightBHDbms(int size){
+ 		return new EqualWeightBHDbms(size);
+ 	}
+ 	
+ 	public static Dbms getTopWeightBHDbms(int size){
+ 		return new TopWeightBHDbms(size);
+ 	}
+ 	
+ 	public static Dbms getBottomWeightBHDbms(int size){
+ 		return new BottomWeightBHDbms(size);
  	}
  }

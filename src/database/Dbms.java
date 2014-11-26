@@ -98,15 +98,15 @@ public abstract class Dbms{
 	 * @param count the requested number of tables
 	 * @return the subset of tables
 	 */
-	public Table[] getTables(int count){
+	public List<Table> getTables(int count){
 		HashSet<Integer> tableSet = new HashSet<Integer>();
 		while(tableSet.size() < count){
 			tableSet.add(getNextRandom());
 		}
-		Table[] tableSubset = new Table[count];
+		ArrayList<Table> tableSubset = new ArrayList<Table>();
 		int index = 0;
 		for (Integer i : tableSet){
-			tableSubset[index] = this.tables[i];
+			tableSubset.add(this.tables[i]);
 		}
 		return tableSubset;
 	}
