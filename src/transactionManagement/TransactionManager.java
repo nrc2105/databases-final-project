@@ -1,5 +1,7 @@
 package transactionManagement;
 
+import database.Dbms;
+
 public class TransactionManager {	
 	
 	int numXactions;
@@ -33,12 +35,12 @@ public class TransactionManager {
 		if (homogeneous) {
 			for (int tIndex = 0; tIndex < numXactions; tIndex++) {
 				transactionSet[tIndex] = 
-						TransactionFactory.getTransaction(writesPerXaction, database);
+						TransactionFactory.getTransaction(tIndex, writesPerXaction, database);
 			}
 		} else {
 			for (int tIndex = 0; tIndex < numXactions; tIndex++) {
-				transactionSet[tIndex] = 
-						TransactionFactory.getTransaction((int)Math.random() * writesPerXaction, database);
+				transactionSet[tIndex] = TransactionFactory.getTransaction(
+						tIndex, (int)(Math.random() * writesPerXaction), database);
 			}
 		}
 	}

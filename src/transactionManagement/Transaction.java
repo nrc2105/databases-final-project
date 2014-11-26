@@ -11,19 +11,24 @@ package transactionManagement;
  *	10/25/14
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.sun.org.apache.bcel.internal.generic.Instruction;
+import lockManagement.LockManager;
+import database.Dbms;
+import database.Table;
 
 
 public class Transaction implements Runnable{
 
 	private int id;
 	private Dbms database;
-	private Set<Table> requiredLocks;
+	private List<Table> requiredLocks;
 	private Map<Table, Integer> availableLocks;
 	private BlockingQueue<Table> finishedLocks;
 		
@@ -36,12 +41,30 @@ public class Transaction implements Runnable{
 	 *	@param the plan of the transaction. //TODO: MIKE I NEED SOME HELP ON THIS PART
 	 */
 
-	public Transaction(int id, Dbms database){
+	public Transaction(int id, int size, Dbms database){
 		this.id = id;
 		this.database = database;
-		this.plan = plan;
-		unnecessaryLocks = new ArrayBlockingQueue<Table>();
-		requiredLocks = new ArrayBlockingQueue<Table>();
+		
+		this.requiredLocks = new ArrayList<Table>(size);
+		requiredLocks.addAll(getRandomTables(size));
+		
+		finishedLocks = new ArrayBlockingQueue<Table>(size);
+		availableLocks = new ConcurrentHashMap<Table, Integer>();
+	}
+	
+	
+	private Collection<Table> getRandomTables(int count) {
+		Table[] dbTables = database.getTables();
+		ArrayList<Table> xactionTables = new ArrayList<Table>(count);
+		while (xactionTables.size() < count) {
+			int tID = (int) (Math.random() * dbTables.length);
+			
+			
+			
+		}
+		
+		
+		
 	}
 	
 	
