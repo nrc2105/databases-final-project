@@ -31,21 +31,18 @@ public abstract class Transaction implements Runnable{
 		this.id = id;
 		this.database = database;
 		this.plan = plan;
-		messageQueue = new ArrayBlockingQueue<Table>();
+		unnecessaryLocks = new ArrayBlockingQueue<Table>();
+		requiredLocks = new ArrayBlockingQueue<Table>();
 	}
 
 	/**
 	 *	Called once at the start of a run to initialize
 	 *	helpers.
+	 * MIKE DON"T TOUCH THIS (OR IF YOU DO, ONLY ADD)
 	 */
 	private void init(){
-		dependencies = database.getDependencies(plan);
-		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
-		releaser.start();
-		for(List<Table> list : dependencies){
-			new LockSeeker(id, new ArrayList(list),
-						unnecessaryLocks, requiredLocks).start();
-		}
+		(new LockManager(database)).getAccess(id, plan, requiredLocks, unnecessaryLocks);	
+		
 	}
 	/**
 	 *	Runs the query on the Dbms, first creating and
@@ -77,7 +74,5 @@ public abstract class Transaction implements Runnable{
 	private Dbms database;
 	private ArrayBlockingQueue<Table> unnecessaryLocks;
 	private ArrayBlockingQueue<Table> requiredLocks;
-	private LockReleaser releaser;
-	private List<List<Table>> dependencies;
 
 }
