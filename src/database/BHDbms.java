@@ -4,32 +4,16 @@ package database;
 public class BHDbms{
 	
 	/**
-	 *	Constructs partial ordering of the tables.
+	 * Returns parent index of current index based on
+	 * the implementation of the Dbms.
 	 *
+	 * @param the index of the child.
+	 * @return the index of the parent.
 	 */
-
 	@Override
-	protected void constructDependencies(){
-		paths = new HashMap<Table, List<Table>>();
-		for(int i = 0; i < tables.size; i++){
-			paths.put(tables[i], getPath(i));
-		}
+	protected int getParentIndex(int childIndex){
+		return (childIndex - 1) / 2;
 	}
 
-	/**
-	 * Constructs path from root based on BH structure
-	 */
-	private List<Table> getPath(int start){
-		int currentIndex = start;
-		Table currentTable;
-		ArrayList<Table> path = new ArrayList<Table>();
-		while(currentIndex >= 0){
-			currentTable = tables[currentIndex];
-			path.add(0,currentTable);
-			currentIndex = (currentIndex - 1) / 2;
-		}
 
-		return path;
-
-	}
 }
