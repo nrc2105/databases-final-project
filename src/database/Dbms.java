@@ -114,9 +114,9 @@ public abstract class Dbms{
 	 *
 	 */
 
-	public List<List<Tables>> getDependecies(Plan plan){
+	public List<List<Tables>> getDependecies(List<Table> plan){
 		List<List<Tables>> dependencies = new ArrayList<ArrayList<Table>>();
-		for (Table table : plan.requiredTables()){
+		for (Table table : plan){
 			dependencies.add(this.getDependecies(table));
 		}
 		return dependencies;

@@ -22,7 +22,7 @@ public class LockManager{
 
 	}
 
-	public void getAccess(int id, Plan plan, ConcurrentHashMap<Table> requiredLocks, 
+	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table> requiredLocks, 
 													BlockingQueue<Table> unnecessaryLocks){
 		dependencies = database.getDependencies(plan);
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
