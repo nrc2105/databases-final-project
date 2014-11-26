@@ -1,7 +1,7 @@
 package database;
 
 
-public class BHDbms extends Dbms{
+public abstract class BHDbms extends Dbms{
 	
 
 	public BHDbms(int size){
@@ -18,6 +18,11 @@ public class BHDbms extends Dbms{
 	@Override
 	protected int getParentIndex(int childIndex){
 		return (childIndex - 1) / 2;
+	}
+	
+	@Override
+	public String toString(){
+		return super.toString() + " STRUCTURE: BINARY HEAP";
 	}
 
 

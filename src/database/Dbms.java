@@ -23,6 +23,7 @@ public abstract class Dbms{
 
 	public Dbms(int size){
 		this.size = size;
+		rand = new Random();
 		this.constructTables();
 		this.constructDependencies();
 	}
@@ -93,6 +94,31 @@ public abstract class Dbms{
 	}
 
 	/**
+	 * Returns a subset of the tables
+	 * @param count the requested number of tables
+	 * @return the subset of tables
+	 */
+	public Table[] getTables(int count){
+		HashSet<Integer> tableSet = new HashSet<Integer>();
+		while(tableSet.size() < count){
+			tableSet.add(getNextRandom());
+		}
+		Table[] tableSubset = new Table[count];
+		int index = 0;
+		for (Integer i : tableSet){
+			tableSubset[index] = this.tables[i];
+		}
+		return tableSubset;
+	}
+	
+	/**
+	 * Returns a random int based on the desired
+	 * distribution.
+	 * @return the next random int
+	 */
+	protected abstract int getNextRandom();
+	
+	/**
 	 *	Returns the locks necessary to get to a
 	 * given table.
 	 *
@@ -122,7 +148,13 @@ public abstract class Dbms{
 		return dependencies;
 	}
 
+	@Override
+	public String toString(){
+		return super.toString() + "DBMS SIZE: " + size;
+	}
+	
 	private Table[] tables;
 	private HashMap<Table, List<Table>> paths;
-	private int size;
+	int size;
+	Random rand;
 }
