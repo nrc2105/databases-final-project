@@ -17,8 +17,8 @@ public class LockManager{
 
 	}
 
-	public void getAccess(int id, Plan plan, ArrayBlockingQueue<Table> requiredLocks, 
-													ArrayBlockingQueue<Table> unnecessaryLocks){
+	public void getAccess(int id, Plan plan, ConcurrentHashMap<Table> requiredLocks, 
+													BlockingQueue<Table> unnecessaryLocks){
 		dependencies = database.getDependencies(plan);
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		releaser.start();
