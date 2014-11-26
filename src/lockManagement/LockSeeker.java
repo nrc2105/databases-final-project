@@ -7,7 +7,7 @@ import database.Table;
  * the final lock in the appropriate shared queue.
  */
 
-public abstract class LockSeeker{
+public class LockSeeker{
 
 	/**
 	 *
@@ -20,7 +20,7 @@ public abstract class LockSeeker{
 	 *
 	 */
 
-	public LockSeeker(int id, List locks, BlockingQueue<Table> obsoleteLocks,
+	public LockSeeker(int id, List<Table> locks, BlockingQueue<Table> obsoleteLocks,
 											ConcurrentHashMap<Table,Integer> requiredLocks){
 		this.id = id;
 		this.locks = locks;

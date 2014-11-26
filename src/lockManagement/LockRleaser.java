@@ -10,7 +10,7 @@ import database.Table;
  * 10/26/14
  */
 
-public abstract class LockReleaser{
+public class LockReleaser{
 
 	/**
 	 *	Creates a new LockReleaser
