@@ -22,12 +22,13 @@ public class BHDbms{
 		int currentIndex = start;
 		Table currentTable;
 		ArrayList<Table> path = new ArrayList<Table>();
-		do{
+		while(currentIndex >= 0){
 			currentTable = tables[currentIndex];
 			path.add(0,currentTable);
 			currentIndex = (currentIndex - 1) / 2;
-		} while (currentTable != tables[0])
+		}
 
+		return path;
 
 	}
 }
