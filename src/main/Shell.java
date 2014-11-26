@@ -2,10 +2,12 @@ package main;
 
 import java.util.HashMap;
 
+import transactionManagement.TransactionManager;
+import database.Dbms;
+
 public class Shell {
 	
-	public static final int MEAN_IO_TIME_MILLIS = 10; 
-	public static final String 
+	public static final int MEAN_IO_TIME_MILLIS = 10;  
 
 	public static void main(String[] args) {
 		if(args[0].equals("help") || args[0].equals("-h")){
@@ -13,26 +15,28 @@ public class Shell {
 		} else{
 			params = defaultParameterMap();
 		}
-		// TODO Auto-generated method stub
 
 		
 		// Configure database
-		
+		// TODO Nick completes this
 		
 		
 		//Configure transaction manager
-		
+		TransactionManager manager = new TransactionManager(numXactions, writesPerXaction, 
+				homogeneous, database);
+		manager.createBatch();
 		
 		
 		// Run batch
+		manager.runBatch();
 		
 		
-		
-		// Return results
-		
+		// Return results (log stuff)
+		LogReporter.analyze(manager.getFullResults());
 		
 		
 	}
+	
 	
 	public static HashMap<String,String> defaultParameterMap(){
 		HashMap<String,String> defaultParams = new HashMap<String,String>();
