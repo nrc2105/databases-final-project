@@ -11,17 +11,23 @@ package transactionManagement;
  *	10/25/14
  */
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
-import LockManager;
-import Table;
-import Dbms;
-import Plan;
+import com.sun.org.apache.bcel.internal.generic.Instruction;
 
 
-public abstract class Transaction implements Runnable{
+public class Transaction implements Runnable{
 
+	private int id;
+	private Dbms database;
+	private Set<Table> requiredLocks;
+	private Map<Table, Integer> availableLocks;
+	private BlockingQueue<Table> finishedLocks;
+		
+	
 	/**
 	 *	Creates a new transaction.
 	 *
@@ -30,12 +36,25 @@ public abstract class Transaction implements Runnable{
 	 *	@param the plan of the transaction. //TODO: MIKE I NEED SOME HELP ON THIS PART
 	 */
 
-	public Transaction(int id, Dbms database, Plan plan){
+	public Transaction(int id, Dbms database){
 		this.id = id;
 		this.database = database;
 		this.plan = plan;
 		unnecessaryLocks = new ArrayBlockingQueue<Table>();
 		requiredLocks = new ArrayBlockingQueue<Table>();
+	}
+	
+	
+	/**
+	 *	Runs the query on the Dbms, first creating and
+	 *	starting the LockReleaser and LockSeekers.
+	 */
+	public final void run() {
+		startLocking();
+		
+		// TODO: build transaction internal behavior
+		
+
 	}
 
 	/**
@@ -43,39 +62,11 @@ public abstract class Transaction implements Runnable{
 	 *	helpers.
 	 * MIKE DON"T TOUCH THIS (OR IF YOU DO, ONLY ADD)
 	 */
-	private void init(){
-		(new LockManager(database)).getAccess(id, plan, requiredLocks, unnecessaryLocks);	
+	private void startLocking(){
+		(new LockManager(database)).getAccess(id, requiredLocks, unnecessaryLocks, finishedLocks);	
 		
 	}
-	/**
-	 *	Runs the query on the Dbms, first creating and
-	 *	starting the LockReleaser and LockSeekers.
-	 */
+	
 
-	public final void run() {
-		this.init();
-		while(true){
-			if((instruction = plan.nextInstruction()) != null){
-				execute(instruction);
-			} else{
-				return; //Done so exit
-			}
-		}
-		
-
-	}
-
-	/**
-	 *	Executes the given instruction
-	 *	@param the instruction
-	 */
-
-	protected abstract void execute(Instruction instruction);
-
-	private int id;
-	private Plan plan;
-	private Dbms database;
-	private ArrayBlockingQueue<Table> unnecessaryLocks;
-	private ArrayBlockingQueue<Table> requiredLocks;
-
+	
 }
