@@ -3,6 +3,10 @@ package lockManagement;
 import database.Dbms;
 import database.Table;
 
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 /*
  * The LockManager controls how table locks can be accessed
  * and starts all necessary lock seekers and releasers at 
@@ -22,19 +26,20 @@ public class LockManager{
 
 	}
 
-	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table> requiredLocks, 
+	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table,Integer> requiredLocks, 
 														BlockingQueue<Table> unnecessaryLocks){
-		dependencies = database.getDependencies(plan);
+		dependencies = db.getDependecies(plan);
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
-		releaser.start();
+		new Thread(releaser).start();
 		for(List<Table> list : dependencies){
-			new LockSeeker(id, new ArrayList(list),
-						unnecessaryLocks, requiredLocks).start();
+			new Thread(new LockSeeker(id, new ArrayList<Table>(list),
+						unnecessaryLocks, requiredLocks)).start();
 
-
+		}
 
 	}
 
+	private Dbms db;
 	private LockReleaser releaser;
 	private List<List<Table>> dependencies;
 	

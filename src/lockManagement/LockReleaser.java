@@ -1,5 +1,9 @@
 package lockManagement;
+
 import database.Table;
+
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 /*
  * LockReleaser will be spawned by a Transaction and
@@ -10,7 +14,7 @@ import database.Table;
  * 10/26/14
  */
 
-public class LockReleaser{
+public class LockReleaser implements Runnable{
 
 	/**
 	 *	Creates a new LockReleaser
@@ -37,10 +41,12 @@ public class LockReleaser{
 	 */
 
 	private void initMap(){
-		dependecyMap = new HashMap<Table>();
+		dependecyMap = new HashMap<Table,Integer>();
+		Integer value;
 		for(List<Table> list : dependencies){
 			for(Table table : list){
-				if((value = dependecyMap.get(table)) == null){
+				value = dependecyMap.get(table);
+				if(value == null){
 					dependecyMap.put(table, 1);
 				} else {
 					dependecyMap.put(table, value + 1);
@@ -60,17 +66,23 @@ public class LockReleaser{
 
 	public final void run(){
 		while(true){
-			Table lock = unnecessaryLocks.take();
-			if((value = dependecyMap.get(lock)) == null){
-				//Throw an exception
-			} else if (value <= 1){
-				dependecyMap.remove(lock);
-				lock.releaseLock(id);
-				if(dependecyMap.isEmpty()){
-					return; //No more dependencies, finished.
+			try{
+				Table lock = unnecessaryLocks.take();
+			
+				Integer value = dependecyMap.get(lock);
+				if(value == null){
+					//Throw an exception
+				} else if (value <= 1){
+					dependecyMap.remove(lock);
+					lock.releaseLock(id);
+					if(dependecyMap.isEmpty()){
+						return; //No more dependencies, finished.
+					}
+				} else {
+					dependecyMap.put(lock, value - 1);
 				}
-			} else {
-				dependecyMap.put(lock, value - 1);
+			}catch(InterruptedException e){
+				e.printStackTrace();
 			}
 		}
 	}

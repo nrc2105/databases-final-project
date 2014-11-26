@@ -1,4 +1,8 @@
 package lockManagement;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 import database.Table;
 
 /*
@@ -7,7 +11,7 @@ import database.Table;
  * the final lock in the appropriate shared queue.
  */
 
-public class LockSeeker{
+public class LockSeeker implements Runnable{
 
 	/**
 	 *
@@ -35,13 +39,17 @@ public class LockSeeker{
 	 * adding unnecessary locks to obsoleteLocks
 	 * and the final lock to requiredLocks
 	 */
-	private final void run(){
+	public final void run(){
 		for(Table lock : locks){
 			while (!lock.acquireLock(id)){
 				//Livespin
 			}
 			if(lastLock != null){
-				obsoleteLocks.put(lastLock);
+				try{
+					obsoleteLocks.put(lastLock);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
 			}
 			lastLock = lock;
 		}
@@ -50,7 +58,7 @@ public class LockSeeker{
 	}
 
 	private int id;
-	private List locks;
+	private List<Table> locks;
 	private BlockingQueue<Table> obsoleteLocks;
 	private ConcurrentHashMap<Table,Integer> requiredLocks;
 	private Table lastLock;
