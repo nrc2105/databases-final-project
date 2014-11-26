@@ -25,13 +25,13 @@ import database.Table;
 
 public class Transaction implements Runnable{
 
-	private int id;
-	private Dbms database;
-	private List<Table> requiredLocks;
-	private ConcurrentHashMap<Table, Integer> availableLocks;
-	private BlockingQueue<Table> finishedLocks;
-	private List<String> log;
-	private Random sleepTime;
+	private int id;								// Transaction ID number
+	private Dbms database;						// Reference to master DB
+	private List<Table> requiredLocks;			// List of locks required by this transaction
+	private ConcurrentHashMap<Table, Integer> availableLocks; // Set of locks available for writing
+	private BlockingQueue<Table> finishedLocks;	// Locks are placed in here after writing
+	private List<String> log;					// Log of this transaction's events
+	private Random sleepTime;					// Used to randomize sleep timers for sim writes
 		
 	
 	/**
@@ -47,20 +47,23 @@ public class Transaction implements Runnable{
 		this.log = new ArrayList<String>();
 		this.sleepTime = new Random();
 		
-		this.requiredLocks = new ArrayList<Table>(size);
-		requiredLocks.addAll(getRandomTables(size));
+		this.requiredLocks = new ArrayList<Table>(database.getTables(size));
 		
 		finishedLocks = new ArrayBlockingQueue<Table>(size);
 		availableLocks = new ConcurrentHashMap<Table, Integer>();
 	}
 	
-	
+
 	/**
 	 *	Runs the query on the Dbms, first creating and
 	 *	starting the LockReleaser and LockSeekers.
 	 */
 	public final void run() {
+		logEvent("began transaction");
+		
 		startLocking();
+		
+		logEvent("sent lock request");
 		
 		for (Table table : requiredLocks) {
 			boolean hadToWait = false;
@@ -86,6 +89,17 @@ public class Transaction implements Runnable{
 			simulateWrite();
 			
 			logEvent(String.format("done with table %s", table.toString()));
+			
+			// Debug check against race conditions
+			assert availableLocks.contains(table) : "RACE CONDITION ERROR: "
+					+ "Table was unlocked while writing to it.";
+			
+			/* Mark lock for releasing
+			 * Note that this method will throw an exception if the Queue is full
+			 * It is unacceptable for the Queue to be full, so this is the preferred
+			 * behavior to threads blocking and corrupting run time data
+			 * */
+			finishedLocks.add(table);
 			
 		}
 		
