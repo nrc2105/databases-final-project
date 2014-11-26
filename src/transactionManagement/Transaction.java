@@ -31,6 +31,7 @@ public class Transaction implements Runnable{
 	private List<Table> requiredLocks;
 	private Map<Table, Integer> availableLocks;
 	private BlockingQueue<Table> finishedLocks;
+	private List<String> log;
 		
 	
 	/**
@@ -44,6 +45,7 @@ public class Transaction implements Runnable{
 	public Transaction(int id, int size, Dbms database){
 		this.id = id;
 		this.database = database;
+		this.log = new ArrayList<String>();
 		
 		this.requiredLocks = new ArrayList<Table>(size);
 		requiredLocks.addAll(getRandomTables(size));
@@ -56,15 +58,17 @@ public class Transaction implements Runnable{
 	private Collection<Table> getRandomTables(int count) {
 		Table[] dbTables = database.getTables();
 		ArrayList<Table> xactionTables = new ArrayList<Table>(count);
+		
+		// Add a random set of tables, avoiding duplicates
 		while (xactionTables.size() < count) {
 			int tID = (int) (Math.random() * dbTables.length);
 			
-			
-			
+			if (!xactionTables.contains(dbTables[tID])) {
+				xactionTables.add(dbTables[tID]);
+			}
 		}
 		
-		
-		
+		return xactionTables;
 	}
 	
 	
@@ -86,8 +90,12 @@ public class Transaction implements Runnable{
 	 * MIKE DON"T TOUCH THIS (OR IF YOU DO, ONLY ADD)
 	 */
 	private void startLocking(){
-		(new LockManager(database)).getAccess(id, requiredLocks, unnecessaryLocks, finishedLocks);	
+		(new LockManager(database)).getAccess(id, requiredLocks, availableLocks, finishedLocks);	
 		
+	}
+	
+	public List<String> getLog() {
+		return log;
 	}
 	
 
