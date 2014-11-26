@@ -1,3 +1,5 @@
+package dummy;
+
 /*
  * The LockManager controls how table locks can be accessed
  * and starts all necessary lock seekers and releasers at 

@@ -1,3 +1,5 @@
+package dummy;
+
 /**
  *	The Dbms is the control structure of the simulator.
  *	It holds the Tables, which are essentially lockable
@@ -30,10 +32,10 @@ public abstract class Dbms{
 	 */
 
 	private void constructTables(){
-		tables = new ArrayList<Table>();
+		tables = Table[size];
 
 		for(int i = 0; i < size; i++){
-			tables.add(new Table());
+			tables[i] = new Table();
 		}
 	}
 
@@ -52,7 +54,7 @@ public abstract class Dbms{
 	 *
 	 */
 
-	public List<Table> getTables(){
+	public Table[] getTables(){
 		return tables;
 	}
 
@@ -86,6 +88,6 @@ public abstract class Dbms{
 		return dependencies;
 	}
 
-	private List<Table> tables;
+	Table[] tables;
 	private HashMap<Table, List<Table>> paths;
 }
