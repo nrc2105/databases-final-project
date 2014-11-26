@@ -104,7 +104,6 @@ public abstract class Dbms{
 			tableSet.add(getNextRandom());
 		}
 		ArrayList<Table> tableSubset = new ArrayList<Table>();
-		int index = 0;
 		for (Integer i : tableSet){
 			tableSubset.add(this.tables[i]);
 		}
