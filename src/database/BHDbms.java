@@ -1,8 +1,13 @@
 package database;
 
 
-public class BHDbms{
+public class BHDbms extends Dbms{
 	
+
+	public BHDbms(int size){
+		super(size);
+	}
+
 	/**
 	 * Returns parent index of current index based on
 	 * the implementation of the Dbms.

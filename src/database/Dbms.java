@@ -1,6 +1,6 @@
 package database;
 
-
+import java.util.*;
 /**
  *	The Dbms is the control structure of the simulator.
  *	It holds the Tables, which are essentially lockable
@@ -33,7 +33,7 @@ public abstract class Dbms{
 	 */
 
 	private void constructTables(){
-		tables = Table[size];
+		tables =  new Table[size];
 
 		for(int i = 0; i < size; i++){
 			tables[i] = new Table();
@@ -47,7 +47,7 @@ public abstract class Dbms{
 
 	protected void constructDependencies(){
 		paths = new HashMap<Table, List<Table>>();
-		for(int i = 0; i < tables.size; i++){
+		for(int i = 0; i < size; i++){
 			paths.put(tables[i], getPath(i));
 		}
 	}
@@ -110,18 +110,19 @@ public abstract class Dbms{
 	 * 	a given Plan.
 	 *
 	 *	@param the Plan requiring locks
-	 *	@param the List<List<Tables>> of dependencies
+	 *	@param the List<List<Table>> of dependencies
 	 *
 	 */
 
-	public List<List<Tables>> getDependecies(List<Table> plan){
-		List<List<Tables>> dependencies = new ArrayList<ArrayList<Table>>();
+	public List<List<Table>> getDependecies(List<Table> plan){
+		List<List<Table>> dependencies = new ArrayList<List<Table>>();
 		for (Table table : plan){
 			dependencies.add(this.getDependecies(table));
 		}
 		return dependencies;
 	}
 
-	Table[] tables;
+	private Table[] tables;
 	private HashMap<Table, List<Table>> paths;
+	private int size;
 }

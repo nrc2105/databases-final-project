@@ -9,7 +9,7 @@ package database;
  *	10/25/14
  */
 
-public abstract class Table{
+public class Table{
 
 	/**
 	 * Create a table with no
@@ -18,11 +18,11 @@ public abstract class Table{
 	 */
 
 	public Table(){
-		currentOwner = null;
+		currentOwner = -1;
 	}
 
 	public synchronized boolean acquireLock(int id){
-		if(currentOwner == null || currentOwner == id){
+		if(currentOwner == -1 || currentOwner == id){
 			currentOwner = id;
 			return true;
 		} else {
@@ -32,7 +32,7 @@ public abstract class Table{
 
 	public synchronized void releaseLock(int id){
 		if(currentOwner == id){
-			currentOwner = null;
+			currentOwner = -1;
 		}
 	}
 
