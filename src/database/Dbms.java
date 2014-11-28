@@ -151,6 +151,12 @@ public abstract class Dbms{
 	 * @return the next random int
 	 */
 	protected abstract int getNextRandom();
+	
+	/**
+	 * Returns the longest path in the Dbms
+	 * @return the path length
+	 */
+	protected abstract int getPathLength();
 
 	
 	private Table[] tables;

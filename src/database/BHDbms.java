@@ -7,6 +7,11 @@ public abstract class BHDbms extends Dbms{
 	public BHDbms(int size){
 		super(size);
 	}
+	
+	@Override
+	public int getPathLength(){
+		return (int)Math.ceil(Math.log((double)size)/Math.log(2));
+	}
 
 	/**
 	 * Returns parent index of current index based on
