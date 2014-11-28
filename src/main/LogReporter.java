@@ -21,10 +21,16 @@ import java.util.Map;
  */
 public class LogReporter {
 	
-	private List<String> logs;
-	private int xactionNum;
+	private List<String> logs;				// List of all logs
+	private int xactionNum;					// Number of transactions in this batch
 	private List<List<String>> xactionLogs;	// List of logs for each transaction
 	
+	
+	/**
+	 * Used to analyze log data from memory. Normally called by Shell at the completion of a run.
+	 * 
+	 * @param logs List<String> of log data items from a batch run.
+	 */
 	public static void analyze(List<String> logs) {
 		
 		LogReporter reporter = new LogReporter(logs);
@@ -44,7 +50,12 @@ public class LogReporter {
 	}
 	
 	
-	public static void printHumanReadable(LogReporter reporter) {
+	/**
+	 * Takes a LogReporter object and prints various human-friendly information
+	 * 
+	 * @param reporter LogReporter object
+	 */
+	private static void printHumanReadable(LogReporter reporter) {
 		
 		System.out.println(reporter.managerToHuman());
 		System.out.println(reporter.dbmsToHuman());
@@ -64,13 +75,12 @@ public class LogReporter {
 	}
 	
 
-	private static String millisToHuman(long time) {
-		long minutes = time / (1000 * 60);
-		long seconds = (time / 1000) % 60;
-		long millis = time % 1000;
-		return String.format("%d:%02d.%d", minutes, seconds, millis);
-	}
-	
+	/**
+	 * Reads a log file and returns a log reporter object
+	 * 
+	 * @param inputData Path object to log file
+	 * @return LogReporter built with read log data
+	 */
 	private static LogReporter readFromFile(Path inputData) {
 		List<String> logs = new ArrayList<String>();
 		try (BufferedReader reader = Files.newBufferedReader(inputData, StandardCharsets.UTF_8)) {
@@ -87,6 +97,12 @@ public class LogReporter {
 		return new LogReporter(logs);
 	}
 
+	
+	/**
+	 * Constructor turns a List of log entries into a LogReporter object.
+	 * 
+	 * @param logSet List<String> of log entries from file or a completed run.
+	 */
 	private LogReporter(List<String> logSet) {
 		this.logs = new ArrayList<String>(logSet);
 		Collections.sort(logs);
@@ -95,6 +111,13 @@ public class LogReporter {
 		this.xactionLogs = getXactionLogs();
 	}
 	
+	
+	/**
+	 * Used as part of the constructor to separate out the transaction log records
+	 * and divide them into a list for each transaction
+	 * 
+	 * @return List of List<String> of transaction logs
+	 */
 	private List<List<String>> getXactionLogs() {
 		xactionLogs = new ArrayList<List<String>>();
 		for (int xactionIndex = 0; xactionIndex < xactionNum; xactionIndex++) {
@@ -134,6 +157,14 @@ public class LogReporter {
 		return runtimes;
 	}
 
+	/**
+	 * Takes in two log entries and returns the number of milliseconds between them.
+	 * Normally used for calculating the run time of a transaction of batch of transactions.
+	 * 
+	 * @param start Log entry for start of event
+	 * @param end Log entry to end of event
+	 * @return Time elapsed during event
+	 */
 	private long getRuntime(String start, String end) {
 		
 		assert !(start== null || end == null) : 
@@ -147,6 +178,11 @@ public class LogReporter {
 		return endTime - startTime;
 	}
 
+	/**
+	 * Queries the master log records and extracts the number of transactions in the batch.
+	 * 
+	 * @return Number of transactions in the batch.
+	 */
 	private int getXactionNum() {
 
 		String num = getManagerRecords().get(0).split("\t")[0].split(",")[1]; 
@@ -154,6 +190,12 @@ public class LogReporter {
 		return Integer.parseInt(num);
 	}
 	
+	
+	/**
+	 * Queries the master log records and extracts entries dealing with the transaction manager.
+	 * 
+	 * @return List of transaction manager records
+	 */
 	private List<String> getManagerRecords() {
 		List<String> managerRecords = new ArrayList<String>();
 		
@@ -168,6 +210,11 @@ public class LogReporter {
 		return managerRecords;
 	}
 	
+	/**
+	 * Queries the master log records and extracts the entry dealing with database configuration.
+	 * 
+	 * @return String of the database configuration.
+	 */
 	private String getDatabaseRecord() {
 		
 		for (String record : logs) {
@@ -179,21 +226,45 @@ public class LogReporter {
 		throw new RuntimeException("ERROR: No Database Record Found");
 	}
 
+	/**
+	 * Takes a string database record and extracts human-readable information from it.
+	 * 
+	 * @param databaseRecord Log entry concerning database 
+	 * @return Human-readable version of database configuration
+	 */
 	private String dbmsToHuman(String databaseRecord) {
 		// TODO update this to make more human readable if desired
 		return databaseRecord.split("\t")[1];
 	}
 	
+	/**
+	 * From LogReporter object, extracts database record and returns it as human-readable
+	 * 
+	 * @return Human-readable version of database configuration
+	 */
 	private String dbmsToHuman() {
 		return dbmsToHuman(getDatabaseRecord());
 	}
 	
+	/**
+	 * Takes any log entry concerning transaction manager and returns the information
+	 * about the whole batch in human-readable format.
+	 * 
+	 * @param managerRecord Any record that includes transaction manager information
+	 * @return Human-readable version of transaction manager configuration
+	 */
 	private String managerToHuman(String managerRecord) {
 		String[] stats = managerRecord.split("\t")[1].split(",");
 		return String.format("Transaction Manager:\n%s transactions\n%s writes per transaction\n"
 				+ "Transaction variety: %s", stats[0], stats[1], stats[2]);
 	}
 	
+	/**
+	 * From LogReporter object, extracts transaction manager record
+	 * and returns the information about the whole batch in human-readable format.
+	 * 
+	 * @return Human-readable version of transaction manager configuration
+	 */
 	private String managerToHuman() {
 		String managerRecord = getManagerRecords().get(0);
 		return managerToHuman(managerRecord);
@@ -289,6 +360,13 @@ public class LogReporter {
 		
 		
 		return "TABLE" + tableNum;
+	}
+	
+	private static String millisToHuman(long time) {
+		long minutes = time / (1000 * 60);
+		long seconds = (time / 1000) % 60;
+		long millis = time % 1000;
+		return String.format("%d:%02d.%d", minutes, seconds, millis);
 	}
 
 }
