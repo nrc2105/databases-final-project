@@ -2,7 +2,10 @@ package test;
 
 import org.junit.Test;
 
+import database.BottomWeightBHDbms;
+import database.DbmsFactory;
 import database.Table;
+import database.Dbms;
 import static org.junit.Assert.*;
 
 public class TestDbms {
@@ -22,5 +25,22 @@ public class TestDbms {
 		success = table.acquireLock(2);
 		assertTrue("id 2 should now be able to acquire lock", success);
 	}
+	
+	@Test
+	public void testDbmsFactory(){
+		Dbms bw = DbmsFactory.getDbms(DbmsFactory.BH,DbmsFactory.BOTTOMWEIGHT,1);
+		Dbms tw = DbmsFactory.getDbms(DbmsFactory.BH,DbmsFactory.TOPWEIGHT,1);
+		Dbms eq = DbmsFactory.getDbms(DbmsFactory.BH,DbmsFactory.EQWEIGHT,1);
+		Dbms wrong = DbmsFactory.getDbms("TREE","MIDDLE",1);
+		assertEquals("class database.BottomWeightBHDbms", bw.getClass().toString());
+		assertEquals("class database.TopWeightBHDbms", tw.getClass().toString());
+		assertEquals("class database.EqualWeightBHDbms", eq.getClass().toString());
+		assertNull(wrong);		
+	}
+	
+	@Test
+	public void 
+	
+
 	
 }

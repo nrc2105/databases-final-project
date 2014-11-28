@@ -72,15 +72,6 @@ public abstract class Dbms{
 
 	}
 
-	/**
-	 * Returns parent index of current index based on
-	 * the implementation of the Dbms.
-	 *
-	 * @param the index of the child.
-	 * @return the index of the parent.
-	 */
-	protected abstract int getParentIndex(int childIndex);
-
 
 	/**
 	 * 	Gets the list of tables in the Dbms.
@@ -109,14 +100,7 @@ public abstract class Dbms{
 		}
 		return tableSubset;
 	}
-	
-	/**
-	 * Returns a random int based on the desired
-	 * distribution.
-	 * @return the next random int
-	 */
-	protected abstract int getNextRandom();
-	
+		
 	/**
 	 *	Returns the locks necessary to get to a
 	 * given table.
@@ -149,8 +133,25 @@ public abstract class Dbms{
 
 	@Override
 	public String toString(){
-		return super.toString() + "DBMS SIZE: " + size;
+		return "DBMS SIZE: " + size;
 	}
+	
+	/**
+	 * Returns parent index of current index based on
+	 * the implementation of the Dbms.
+	 *
+	 * @param the index of the child.
+	 * @return the index of the parent.
+	 */
+	protected abstract int getParentIndex(int childIndex);
+	
+	/**
+	 * Returns a random int based on the desired
+	 * distribution.
+	 * @return the next random int
+	 */
+	protected abstract int getNextRandom();
+
 	
 	private Table[] tables;
 	private HashMap<Table, List<Table>> paths;

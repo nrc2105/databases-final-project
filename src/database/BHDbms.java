@@ -17,7 +17,12 @@ public abstract class BHDbms extends Dbms{
 	 */
 	@Override
 	protected int getParentIndex(int childIndex){
+		if(childIndex == 0){
+			return -1;
+		}
+		
 		return (childIndex - 1) / 2;
+			
 	}
 	
 	@Override
