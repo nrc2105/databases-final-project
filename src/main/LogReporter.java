@@ -21,8 +21,9 @@ public class LogReporter {
 		
 		LogReporter reporter = new LogReporter(logs);
 		
-		
-		System.out.printf("Total run time: %s", millisToHuman(reporter.totalRunTime()));
+		System.out.println(reporter.managerToHuman());
+		System.out.println(reporter.dbmsToHuman());
+		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		
 		
 		
@@ -82,7 +83,12 @@ public class LogReporter {
 	}
 
 	private String dbmsToHuman(String databaseRecord) {
-		return null;
+		// TODO update this to make more human readable if desired
+		return databaseRecord.split("\t")[1];
+	}
+	
+	private String dbmsToHuman() {
+		return dbmsToHuman(getDatabaseRecord());
 	}
 	
 	private String managerToHuman(String managerRecord) {
@@ -96,9 +102,32 @@ public class LogReporter {
 		return managerToHuman(managerRecord);
 	}
 	
+	/**
+	 * Gets time stamp for "beginning transaction batch"
+	 * and time stamp for "completed transaction batch"
+	 * and returns the difference
+	 * @return runtime (in milliseconds) of transaction batch
+	 */
 	private long totalRunTime() {
+		String startTime = "0";
+		String endTime = "0";
+		for (String record : getManagerRecords()) {
+			if (record.contains("beginning transaction batch")) {
+				startTime = record.split("\t")[0];
+			} else if (record.contains("completed transaction batch")) {
+				endTime = record.split("\t")[0];
+			}
+		}
 		
-		return 0;
+		assert !(startTime.equals("0") || endTime.equals("0")) : 
+			"ERROR: Failed to find start or end timestamps for the batch.";
+		
+		long start = Long.parseLong(startTime);
+		long end = Long.parseLong(endTime);
+		
+		assert end - start > 0 : "ERROR: Batch started after it ended.";
+		
+		return end - start;
 	}
 
 }
