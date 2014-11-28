@@ -290,6 +290,11 @@ public class LogReporter {
 		return getRuntime(startTime, endTime);
 	}
 	
+	/**
+	 * Gets a map of table access frequencies from master log data
+	 * 
+	 * @return Map of Table name (string) to table access frequency
+	 */
 	private Map<String, Integer> getTableFreqMap() {
 		Map<String, Integer> tableFreq = new HashMap<String, Integer>();
 		
@@ -328,7 +333,12 @@ public class LogReporter {
 		return list;
 	}
 	
-	
+	/**
+	 * Takes any list of strings with tabs separating logical keys from values and inverts
+	 * the key and value for each line
+	 * 
+	 * @param list of (KeyString) \t (ValueString)
+	 */
 	private static void invertTabSeparatedList(List<String> list) {
 		for (int index = 0; index < list.size(); index++) {
 			String[] entries = list.get(index).split("\t"); 
@@ -355,6 +365,12 @@ public class LogReporter {
 		return list;
 	}
 	
+	/**
+	 * Takes a logEntry concerning a Table in the database and extracts the name of that table
+	 * 
+	 * @param logEntry Any log entry concerning a table
+	 * @return Table name
+	 */
 	private static String getTableName(String logEntry) {		
 		String tableNum = logEntry.split("TABLE")[1];
 		
@@ -362,6 +378,13 @@ public class LogReporter {
 		return "TABLE" + tableNum;
 	}
 	
+	/**
+	 * Converts long millisecond time period into human readable minutes:seconds.fraction
+	 * format
+	 * 
+	 * @param time
+	 * @return
+	 */
 	private static String millisToHuman(long time) {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
