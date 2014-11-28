@@ -37,7 +37,7 @@ public abstract class Dbms{
 		tables =  new Table[size];
 
 		for(int i = 0; i < size; i++){
-			tables[i] = new Table();
+			tables[i] = new Table(i);
 		}
 	}
 

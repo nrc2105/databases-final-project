@@ -20,6 +20,11 @@ public class Table{
 	public Table(){
 		currentOwner = -1;
 	}
+	
+	public Table(int name){
+		currentOwner = -1;
+		this.name = name;
+	}
 
 	public synchronized boolean acquireLock(int id){
 		if(currentOwner == -1 || currentOwner == id){
@@ -35,6 +40,12 @@ public class Table{
 			currentOwner = -1;
 		}
 	}
+	
+	@Override
+	public String toString(){
+		return "TABLE " + name;
+	}
 
+	private int name;
 	private int currentOwner;
 }

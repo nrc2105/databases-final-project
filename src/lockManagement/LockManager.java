@@ -28,7 +28,7 @@ public class LockManager{
 
 	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table,Integer> requiredLocks, 
 														BlockingQueue<Table> unnecessaryLocks){
-		dependencies = db.getDependecies(plan);
+		dependencies = db.getDependencies(plan);
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		new Thread(releaser).start();
 		for(List<Table> list : dependencies){
