@@ -36,9 +36,9 @@ public class Transaction implements Runnable{
 	/**
 	 *	Creates a new transaction.
 	 *
-	 *	@param the int id.
-	 *	@param the Dbms to run on.
-	 *	@param the plan of the transaction. //TODO: MIKE I NEED SOME HELP ON THIS PART
+	 *	@param id the int id.
+	 *  @param size the number of data items accessed by this transaction
+	 *	@param database the Dbms to run on.
 	 */
 	public Transaction(int id, int size, Dbms database){
 		this.id = id;
@@ -103,7 +103,7 @@ public class Transaction implements Runnable{
 			
 		}
 		
-
+		logEvent("completed transaction");
 	}
 	
 	

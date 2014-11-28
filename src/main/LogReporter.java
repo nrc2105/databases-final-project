@@ -21,8 +21,9 @@ public class LogReporter {
 		
 		LogReporter reporter = new LogReporter(logs);
 		
-		
-		System.out.printf("Total run time: %s", millisToHuman(reporter.totalRunTime()));
+		System.out.println(reporter.managerToHuman());
+		System.out.println(reporter.dbmsToHuman());
+		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		
 		
 		
@@ -33,7 +34,7 @@ public class LogReporter {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
-		return String.format("%d:%2d.%d", minutes, seconds, millis);
+		return String.format("%d:%02d.%d", minutes, seconds, millis);
 	}
 
 	private LogReporter(List<String> logSet) {
@@ -45,8 +46,38 @@ public class LogReporter {
 	}
 	
 	private List<List<String>> getXactionLogs() {
-		// TODO Auto-generated method stub
-		return null;
+		xactionLogs = new ArrayList<List<String>>();
+		for (int xactionIndex = 0; xactionIndex < xactionNum; xactionIndex++) {
+			ArrayList<String> xLog = new ArrayList<String>();
+			for (String logEntry : logs) {
+				if (logEntry.contains("XACTION," + xactionIndex)) {
+					xLog.add(logEntry);
+				}
+			}
+			assert !xLog.isEmpty() : "ERROR: Found no logs for transaction number " + xactionIndex;
+			xactionLogs.add(xLog);
+		}
+		
+		assert xactionLogs.size() == xactionNum;
+		
+		return xactionLogs;
+	}
+	
+	private List<String> getXactionRuntimes() {
+		List<String> runtimes = new ArrayList<String>();
+		for (List<String> xLog : xactionLogs) {
+			runtimes.add(xLog.get(0).split("\t")[1] + ": " + millisToHuman(getRuntime(xLog)));			
+		}
+		
+		assert runtimes.size() == xactionNum : 
+			"ERROR: Number of runtimes doesn't match number of transactions.";
+		
+		return runtimes;
+	}
+
+	private long getRuntime(List<String> xLog) {
+		
+		return 0;
 	}
 
 	private int getXactionNum() {
@@ -82,7 +113,12 @@ public class LogReporter {
 	}
 
 	private String dbmsToHuman(String databaseRecord) {
-		return null;
+		// TODO update this to make more human readable if desired
+		return databaseRecord.split("\t")[1];
+	}
+	
+	private String dbmsToHuman() {
+		return dbmsToHuman(getDatabaseRecord());
 	}
 	
 	private String managerToHuman(String managerRecord) {
@@ -96,9 +132,32 @@ public class LogReporter {
 		return managerToHuman(managerRecord);
 	}
 	
+	/**
+	 * Gets time stamp for "beginning transaction batch"
+	 * and time stamp for "completed transaction batch"
+	 * and returns the difference
+	 * @return runtime (in milliseconds) of transaction batch
+	 */
 	private long totalRunTime() {
+		String startTime = "0";
+		String endTime = "0";
+		for (String record : getManagerRecords()) {
+			if (record.contains("beginning transaction batch")) {
+				startTime = record.split("\t")[0];
+			} else if (record.contains("completed transaction batch")) {
+				endTime = record.split("\t")[0];
+			}
+		}
 		
-		return 0;
+		assert !(startTime.equals("0") || endTime.equals("0")) : 
+			"ERROR: Failed to find start or end timestamps for the batch.";
+		
+		long start = Long.parseLong(startTime);
+		long end = Long.parseLong(endTime);
+		
+		assert end - start > 0 : "ERROR: Batch started after it ended.";
+		
+		return end - start;
 	}
 
 }
