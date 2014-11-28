@@ -4,44 +4,78 @@ import java.util.HashMap;
 
 import transactionManagement.TransactionManager;
 import database.Dbms;
+import database.DbmsFactory;
 
 public class Shell {
 	
-	public static final int MEAN_IO_TIME_MILLIS = 10;  
+	public static final int MEAN_IO_TIME_MILLIS = 10;
+	public static final String DBSIZE = "dbsize";
+	public static final String DEFAULTSIZE = "100";
+	public static final String STRUCT = "struct";
+	public static final String DEFAULTSTRUCT= DbmsFactory.BH;
+	public static final String WEIGHT = "weight";
+	public static final String DEFAULTWEIGHT = DbmsFactory.EQWEIGHT;
+	public static final String BATCHSIZE = "batchsize";
+	public static final String DEFAULTBSIZE = "100";
+	public static final String XACTIONSIZE = "xactionsize";
+	public static final String DEFAULTXSIZE = "10";
+	public static final String XACTIONVARIETY = "xactionvariety";
+	public static final String DEFAULTXVARIETY = "false";
+	public static final String VERBOSE = "verbose";
+	public static final String DEFAULTVERBOSE = "true";
 
 	public static void main(String[] args) {
 		if(args[0].equals("help") || args[0].equals("-h")){
 			printHelp();
 		} else{
-			params = defaultParameterMap();
+			
+			HashMap<String,String> params = getParameterMap(args);
+			String struct = params.get(STRUCT);
+			String weight = params.get(WEIGHT);
+			int size = Integer.parseInt(params.get(DBSIZE));
+			Dbms database = DbmsFactory.getDbms(struct, weight, size);
+			if(database == null){
+				throw new RuntimeException();
+			}
+			int numXactions = Integer.parseInt(params.get(BATCHSIZE));
+			int writesPerXaction = Integer.parseInt(params.get(XACTIONSIZE));
+			boolean homogeneous = Boolean.parseBoolean(params.get(XACTIONVARIETY));
+			//Configure transaction manager
+			TransactionManager manager = new TransactionManager(numXactions, writesPerXaction, 
+															homogeneous, database);
+			manager.createBatch();
+		
+		
+			// Run batch
+			manager.runBatch();
+		
+		
+			// Return results (log stuff)
+			LogReporter.analyze(manager.getFullResults());
+		
 		}
-
-		
-		// Configure database
-		// TODO Nick completes this
-		
-		
-		//Configure transaction manager
-		TransactionManager manager = new TransactionManager(numXactions, writesPerXaction, 
-				homogeneous, database);
-		manager.createBatch();
-		
-		
-		// Run batch
-		manager.runBatch();
-		
-		
-		// Return results (log stuff)
-		LogReporter.analyze(manager.getFullResults());
-		
-		
 	}
 	
 	
-	public static HashMap<String,String> defaultParameterMap(){
-		HashMap<String,String> defaultParams = new HashMap<String,String>();
-		
-		return defaultParams;
+	public static HashMap<String,String> getParameterMap(String[] args)
+			throws RuntimeException{
+		HashMap<String,String> params = new HashMap<String,String>();
+		params.put(DBSIZE, DEFAULTSIZE);
+		params.put(STRUCT, DEFAULTSTRUCT);
+		params.put(WEIGHT, DEFAULTWEIGHT);
+		params.put(BATCHSIZE, DEFAULTBSIZE);
+		params.put(XACTIONSIZE, DEFAULTXSIZE);
+		params.put(XACTIONVARIETY, DEFAULTXVARIETY);
+		params.put(VERBOSE, DEFAULTVERBOSE);
+		for(String a : args){
+			String[] parsed = a.split("=");
+			if(parsed.length == 2){
+				params.put(parsed[0].trim(), parsed[1].trim());
+			} else{
+				throw new RuntimeException();
+			}
+		}
+		return params;
 	}
 	
 	public static void printHelp(){
