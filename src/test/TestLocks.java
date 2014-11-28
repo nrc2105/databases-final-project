@@ -58,7 +58,7 @@ public class TestLocks {
 		dependencies.add(dependency1);
 		dependencies.add(dependency2);
 		dependencies.add(dependency3);
-		BlockingQueue<Table> unnecessaryLocks = new ArrayBlockingQueue<Table>(6);
+		BlockingQueue<Table> unnecessaryLocks = new ArrayBlockingQueue<Table>(1);
 		LockReleaser releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		assertNotNull(releaser);
 		Thread releaserThread = new Thread(releaser);
@@ -69,19 +69,19 @@ public class TestLocks {
 		assertFalse(table1.acquireLock(2));
 		assertFalse(table2.acquireLock(2));
 		assertFalse(table3.acquireLock(2));
+		unnecessaryLocks.put(table3);
 		unnecessaryLocks.put(table1);
 		unnecessaryLocks.put(table2);
-		unnecessaryLocks.put(table3);
 		assertFalse(table1.acquireLock(2));
 		assertFalse(table2.acquireLock(2));
-		unnecessaryLocks.put(table1);
+		assertTrue(table3.acquireLock(2));
 		unnecessaryLocks.put(table2);
+		unnecessaryLocks.put(table1);
 		assertFalse(table1.acquireLock(2));
+		assertTrue(table2.acquireLock(2));
 		unnecessaryLocks.put(table1);
 		releaserThread.join();
 		assertTrue(table1.acquireLock(2));
-		assertTrue(table2.acquireLock(2));
-		assertTrue(table3.acquireLock(2));
 		assertTrue(true);
 	}
 }
