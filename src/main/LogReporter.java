@@ -1,8 +1,16 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles parsing and analyzing log data from each run. Designed to be run as part of
@@ -21,20 +29,63 @@ public class LogReporter {
 		
 		LogReporter reporter = new LogReporter(logs);
 		
+		printHumanReadable(reporter);
+	}
+	
+	/**
+	 * Used to analyze saved log data from a log file
+	 * 
+	 * @param fileName Name of log file
+	 */
+	public static void analyze(String fileName) {
+		LogReporter reporter = readFromFile(FileSystems.getDefault().getPath(fileName));
+		
+		printHumanReadable(reporter);
+	}
+	
+	
+	public static void printHumanReadable(LogReporter reporter) {
+		
 		System.out.println(reporter.managerToHuman());
 		System.out.println(reporter.dbmsToHuman());
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		
+		// Print transaction runtimes
+		System.out.println("Transaction run times:");
+		for (String s : reporter.getXactionRuntimes()) {
+			System.out.println(s);
+		}
 		
+		// TODO Print out how often data items are accessed
+		System.out.println("Table access frequencies: ");
+		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
+			System.out.println(s);
+		}
 		
-			
 	}
 	
+
 	private static String millisToHuman(long time) {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
 		return String.format("%d:%02d.%d", minutes, seconds, millis);
+	}
+	
+	private static LogReporter readFromFile(Path inputData) {
+		List<String> logs = new ArrayList<String>();
+		try (BufferedReader reader = Files.newBufferedReader(inputData, StandardCharsets.UTF_8)) {
+			
+			while (reader.ready()) {
+				logs.add(reader.readLine());
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return new LogReporter(logs);
 	}
 
 	private LogReporter(List<String> logSet) {
@@ -63,10 +114,19 @@ public class LogReporter {
 		return xactionLogs;
 	}
 	
+	/**
+	 * Gets Transaction run times and returns them as a list of Strings,
+	 * with one entry for each pair of transaction and run time.
+	 * 
+	 * @return List of strings: Transaction: run time
+	 */
 	private List<String> getXactionRuntimes() {
 		List<String> runtimes = new ArrayList<String>();
 		for (List<String> xLog : xactionLogs) {
-			runtimes.add(xLog.get(0).split("\t")[1] + ": " + millisToHuman(getRuntime(xLog)));			
+			String startEntry = xLog.get(0);
+			String endEntry = xLog.get(xLog.size() - 1);
+			long runtime = getRuntime(startEntry, endEntry);
+			runtimes.add(xLog.get(0).split("\t")[1] + ": " + millisToHuman(runtime));			
 		}
 		
 		assert runtimes.size() == xactionNum : 
@@ -75,9 +135,17 @@ public class LogReporter {
 		return runtimes;
 	}
 
-	private long getRuntime(List<String> xLog) {
+	private long getRuntime(String start, String end) {
 		
-		return 0;
+		assert !(start== null || end == null) : 
+			"ERROR: Failed to find start or end timestamps for the batch.";
+		
+		long startTime = Long.parseLong(start.split("\t")[0]);
+		long endTime = Long.parseLong(end.split("\t")[0]);
+		
+		assert endTime > startTime : "ERROR: End time is before start time.";
+		
+		return endTime - startTime;
 	}
 
 	private int getXactionNum() {
@@ -139,25 +207,87 @@ public class LogReporter {
 	 * @return runtime (in milliseconds) of transaction batch
 	 */
 	private long totalRunTime() {
-		String startTime = "0";
-		String endTime = "0";
+		String startTime = null;
+		String endTime = null;
 		for (String record : getManagerRecords()) {
 			if (record.contains("beginning transaction batch")) {
-				startTime = record.split("\t")[0];
+				startTime = record;
 			} else if (record.contains("completed transaction batch")) {
-				endTime = record.split("\t")[0];
+				endTime = record;
 			}
 		}
 		
-		assert !(startTime.equals("0") || endTime.equals("0")) : 
-			"ERROR: Failed to find start or end timestamps for the batch.";
+		return getRuntime(startTime, endTime);
+	}
+	
+	private Map<String, Integer> getTableFreqMap() {
+		Map<String, Integer> tableFreq = new HashMap<String, Integer>();
 		
-		long start = Long.parseLong(startTime);
-		long end = Long.parseLong(endTime);
+		for (String logEntry : logs) {
+			if (logEntry.contains("writing to table")) {
+				String table = getTableName(logEntry);
+				if (tableFreq.containsKey(table)) {
+					tableFreq.put(table, tableFreq.get(table) + 1);
+				} else {
+					tableFreq.put(table, 1);
+				}
+			}
+		}
 		
-		assert end - start > 0 : "ERROR: Batch started after it ended.";
+		return tableFreq;
+	}
+	
+	/**
+	 * Utility to turn a map of Strings and Integers (as in the Table Frequency Map)
+	 * and turn it into a list of Strings, each containing the table name followed by
+	 * access frequency, sorted by table access frequencies.
+	 * 
+	 * @param map Map of Strings to Integers
+	 * @return List of Strings, sorted on original Map integers
+	 */
+	private static List<String> mapToValueSortedList(Map<String, Integer> map) {
+		List<String> list;
 		
-		return end - start;
+		// Gets a key-sorted list, inverts and sorts it, then inverts it again
+		list = mapToKeySortedList(map);
+		invertTabSeparatedList(list);
+		Collections.sort(list);
+		invertTabSeparatedList(list);
+		
+		
+		return list;
+	}
+	
+	
+	private static void invertTabSeparatedList(List<String> list) {
+		for (int index = 0; index < list.size(); index++) {
+			String[] entries = list.get(index).split("\t"); 
+			list.set(index, entries[1] + "\t" + entries[0]);
+		}
+	}
+
+	/**
+	 * Utility to turn a map of Strings and Integers (as in the Table Frequency Map)
+	 * and turn it into a list of Strings, each containing the table name followed by
+	 * access frequency, sorted by table names.
+	 * 
+	 * @param map Map of Strings to Integers
+	 * @return List of Strings, sorted on original Map strings
+	 */
+	private static List<String> mapToKeySortedList(Map<String, Integer> map) {
+		List<String> list = new ArrayList<String>();
+		for (String key : map.keySet()) {
+			list.add(key + "\t" + map.get(key));
+		}
+		
+		Collections.sort(list);
+		
+		return list;
+	}
+	
+	private static String getTableName(String logEntry) {
+		// TODO extract table name from a log entry
+		return null;
 	}
 
 }
