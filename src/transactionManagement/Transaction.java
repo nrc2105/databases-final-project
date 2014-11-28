@@ -48,7 +48,7 @@ public class Transaction implements Runnable{
 		
 		this.requiredLocks = new ArrayList<Table>(database.getTables(size));
 		
-		finishedLocks = new ArrayBlockingQueue<Table>(size);
+		finishedLocks = new ArrayBlockingQueue<Table>(size * database.getPathLength());
 		availableLocks = new ConcurrentHashMap<Table, Integer>();
 	}
 	
