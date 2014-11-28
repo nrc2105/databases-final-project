@@ -30,7 +30,9 @@ public class TransactionManager {
 			Dbms database) {
 		
 		this.numXactions = numXactions;
+		assert this.numXactions > 0 : "ERROR: numXactions is " + this.numXactions;
 		this.writesPerXaction = writesPerXaction;
+		assert this.writesPerXaction > 0 : "ERROR: writesPerXaction is " + this.writesPerXaction;
 		this.homogeneous = homogeneous;
 		this.database = database;
 		transactionSet = new Transaction[numXactions];

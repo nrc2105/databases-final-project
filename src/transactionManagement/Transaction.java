@@ -48,7 +48,14 @@ public class Transaction implements Runnable{
 		
 		this.requiredLocks = new ArrayList<Table>(database.getTables(size));
 		
-		finishedLocks = new ArrayBlockingQueue<Table>(size * database.getPathLength());
+		assert size > 0 : "ERROR: transaction size is " + size;
+
+		int finishedSize = size * database.getPathLength();
+		
+		assert database.getPathLength() >= 1 : "ERROR: database.getPathLength "
+				+ "returned a value less than zero: " + database.getPathLength();
+		
+		finishedLocks = new ArrayBlockingQueue<Table>(finishedSize);
 		availableLocks = new ConcurrentHashMap<Table, Integer>();
 	}
 	
