@@ -39,10 +39,10 @@ public class Shell {
 			}
 			int numXactions = Integer.parseInt(params.get(BATCHSIZE));
 			int writesPerXaction = Integer.parseInt(params.get(XACTIONSIZE));
-			boolean homogeneous = Boolean.parseBoolean(params.get(XACTIONVARIETY));
+			boolean xactionVariety = Boolean.parseBoolean(params.get(XACTIONVARIETY));
 			//Configure transaction manager
 			TransactionManager manager = new TransactionManager(numXactions, writesPerXaction, 
-															homogeneous, database);
+															xactionVariety, database);
 			manager.createBatch();
 		
 		
