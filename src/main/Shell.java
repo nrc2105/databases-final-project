@@ -25,7 +25,8 @@ public class Shell {
 	public static final String DEFAULTVERBOSE = "true";
 
 	public static void main(String[] args) {
-		if(args[0].equals("help") || args[0].equals("-h")){
+		//if(args != null && args[0].equals("help") || args[0].equals("-h")){
+		if(false){
 			printHelp();
 		} else{
 			
