@@ -46,7 +46,7 @@ public abstract class Dbms{
 	 *
 	 */
 
-	protected void constructDependencies(){
+	private void constructDependencies(){
 		paths = new HashMap<Table, List<Table>>();
 		for(int i = 0; i < size; i++){
 			paths.put(tables[i], getPath(i));
@@ -110,7 +110,7 @@ public abstract class Dbms{
 	 *
 	 */
 
-	public List<Table> getDependecies(Table goal){
+	public List<Table> getDependencies(Table goal){
 		return paths.get(goal);
 	}
 
@@ -123,10 +123,10 @@ public abstract class Dbms{
 	 *
 	 */
 
-	public List<List<Table>> getDependecies(List<Table> plan){
+	public List<List<Table>> getDependencies(List<Table> plan){
 		List<List<Table>> dependencies = new ArrayList<List<Table>>();
 		for (Table table : plan){
-			dependencies.add(this.getDependecies(table));
+			dependencies.add(this.getDependencies(table));
 		}
 		return dependencies;
 	}
