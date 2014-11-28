@@ -156,7 +156,7 @@ public abstract class Dbms{
 	 * Returns the longest path in the Dbms
 	 * @return the path length
 	 */
-	protected abstract int getPathLength();
+	public abstract int getPathLength();
 
 	
 	private Table[] tables;
