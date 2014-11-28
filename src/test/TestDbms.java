@@ -48,7 +48,8 @@ public class TestDbms {
 	public void testBHDbms(){
 		Dbms db = new EqualWeightBHDbms(7);
 		Table[] tables = db.getTables();
-		assertEquals("Size should be 6", 7, tables.length);
+		assertEquals("Size should be 7", 7, tables.length);
+		assertEquals("Height should be 3", 3, db.getPathLength());
 		List<Table> subTables = db.getTables(3);
 		assertEquals("Size should be 3", 3, subTables.size());
 		for(Table table : subTables){
