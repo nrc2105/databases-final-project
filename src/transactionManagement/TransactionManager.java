@@ -62,7 +62,7 @@ public class TransactionManager {
 		} else {
 			for (int tIndex = 0; tIndex < numXactions; tIndex++) {
 				transactionSet[tIndex] = TransactionFactory.getTransaction(
-						tIndex, (int)(Math.random() * writesPerXaction), database);
+						tIndex, (int)(Math.random() * writesPerXaction + writesPerXaction), database);
 			}
 		}
 		
