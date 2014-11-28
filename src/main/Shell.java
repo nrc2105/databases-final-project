@@ -29,10 +29,12 @@ public class Shell {
 			printHelp();
 		} else{
 			
+			System.out.println("INITIALIZING PARAMETER MAP");
 			HashMap<String,String> params = getParameterMap(args);
 			String struct = params.get(STRUCT);
 			String weight = params.get(WEIGHT);
 			int size = Integer.parseInt(params.get(DBSIZE));
+			System.out.println("INITIALIZING DATABASE");
 			Dbms database = DbmsFactory.getDbms(struct, weight, size);
 			if(database == null){
 				throw new RuntimeException();
@@ -41,16 +43,20 @@ public class Shell {
 			int writesPerXaction = Integer.parseInt(params.get(XACTIONSIZE));
 			boolean xactionVariety = Boolean.parseBoolean(params.get(XACTIONVARIETY));
 			//Configure transaction manager
+			System.out.println("CREATING TRANSACTION MANAGER");
 			TransactionManager manager = new TransactionManager(numXactions, writesPerXaction, 
 															xactionVariety, database);
+			System.out.println("CREATING TRANSACTION BATCH");
 			manager.createBatch();
 		
 		
 			// Run batch
+			System.out.println("RUNNING TRANSACTION BATCH");
 			manager.runBatch();
 		
 		
 			// Return results (log stuff)
+			System.out.println("RUNNING ANALYSIS");
 			LogReporter.analyze(manager.getFullResults());
 		
 		}
