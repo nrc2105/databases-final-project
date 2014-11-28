@@ -10,7 +10,7 @@ public class TransactionManager {
 	
 	private int numXactions;
 	private int writesPerXaction;
-	private boolean homogeneous;
+	private boolean xactionVaritey;
 	private Transaction[] transactionSet;
 	private Dbms database;
 	private List<String> masterLog;
@@ -26,14 +26,14 @@ public class TransactionManager {
 	 * of writes or identical (homogeneous) number of writes
 	 * @param database Underlying database on which these transactions are run
 	 */
-	public TransactionManager(int numXactions, int writesPerXaction, boolean homogeneous, 
+	public TransactionManager(int numXactions, int writesPerXaction, boolean xactionVaritey, 
 			Dbms database) {
 		
 		this.numXactions = numXactions;
 		assert this.numXactions > 0 : "ERROR: numXactions is " + this.numXactions;
 		this.writesPerXaction = writesPerXaction;
 		assert this.writesPerXaction > 0 : "ERROR: writesPerXaction is " + this.writesPerXaction;
-		this.homogeneous = homogeneous;
+		this.xactionVaritey = xactionVaritey;
 		this.database = database;
 		transactionSet = new Transaction[numXactions];
 		masterLog = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class TransactionManager {
 		
 		logEvent("creating batch");
 		
-		if (homogeneous) {
+		if (!xactionVaritey) {
 			for (int tIndex = 0; tIndex < numXactions; tIndex++) {
 				transactionSet[tIndex] = 
 						TransactionFactory.getTransaction(tIndex, writesPerXaction, database);
@@ -104,7 +104,7 @@ public class TransactionManager {
 	
 	@Override
 	public String toString() {
-		return "MANAGER," + numXactions + "," + writesPerXaction + "," + homogeneous;
+		return "MANAGER," + numXactions + "," + writesPerXaction + "," + xactionVaritey;
 	}
 	
 	
