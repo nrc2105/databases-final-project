@@ -34,7 +34,7 @@ public class LogReporter {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
-		return String.format("%d:%2d.%d", minutes, seconds, millis);
+		return String.format("%d:%02d.%d", minutes, seconds, millis);
 	}
 
 	private LogReporter(List<String> logSet) {
@@ -46,8 +46,38 @@ public class LogReporter {
 	}
 	
 	private List<List<String>> getXactionLogs() {
-		// TODO Auto-generated method stub
-		return null;
+		xactionLogs = new ArrayList<List<String>>();
+		for (int xactionIndex = 0; xactionIndex < xactionNum; xactionIndex++) {
+			ArrayList<String> xLog = new ArrayList<String>();
+			for (String logEntry : logs) {
+				if (logEntry.contains("XACTION," + xactionIndex)) {
+					xLog.add(logEntry);
+				}
+			}
+			assert !xLog.isEmpty() : "ERROR: Found no logs for transaction number " + xactionIndex;
+			xactionLogs.add(xLog);
+		}
+		
+		assert xactionLogs.size() == xactionNum;
+		
+		return xactionLogs;
+	}
+	
+	private List<String> getXactionRuntimes() {
+		List<String> runtimes = new ArrayList<String>();
+		for (List<String> xLog : xactionLogs) {
+			runtimes.add(xLog.get(0).split("\t")[1] + ": " + millisToHuman(getRuntime(xLog)));			
+		}
+		
+		assert runtimes.size() == xactionNum : 
+			"ERROR: Number of runtimes doesn't match number of transactions.";
+		
+		return runtimes;
+	}
+
+	private long getRuntime(List<String> xLog) {
+		
+		return 0;
 	}
 
 	private int getXactionNum() {
