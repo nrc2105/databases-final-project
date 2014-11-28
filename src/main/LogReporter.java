@@ -32,9 +32,10 @@ public class LogReporter {
 	 * @param logs List<String> of log data items from a batch run.
 	 */
 	public static void analyze(List<String> logs) {
-		
+		System.out.println("Creating log reporter...");
 		LogReporter reporter = new LogReporter(logs);
 		
+		System.out.println("Generating data report...");
 		printHumanReadable(reporter);
 	}
 	
