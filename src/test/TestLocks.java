@@ -74,14 +74,14 @@ public class TestLocks {
 		unnecessaryLocks.put(table3);
 		assertFalse(table1.acquireLock(2));
 		assertFalse(table2.acquireLock(2));
-		assertTrue(table3.acquireLock(2));
 		unnecessaryLocks.put(table1);
 		unnecessaryLocks.put(table2);
 		assertFalse(table1.acquireLock(2));
-		assertTrue(table2.acquireLock(2));
 		unnecessaryLocks.put(table1);
-		assertTrue(table1.acquireLock(2));
 		releaserThread.join();
+		assertTrue(table1.acquireLock(2));
+		assertTrue(table2.acquireLock(2));
+		assertTrue(table3.acquireLock(2));
 		assertTrue(true);
 	}
 }
