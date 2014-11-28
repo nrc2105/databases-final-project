@@ -56,7 +56,6 @@ public class LogReporter {
 			System.out.println(s);
 		}
 		
-		// TODO Print out how often data items are accessed
 		System.out.println("Table access frequencies: ");
 		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
 			System.out.println(s);
@@ -285,9 +284,11 @@ public class LogReporter {
 		return list;
 	}
 	
-	private static String getTableName(String logEntry) {
-		// TODO extract table name from a log entry
-		return null;
+	private static String getTableName(String logEntry) {		
+		String tableNum = logEntry.split("TABLE")[1];
+		
+		
+		return "TABLE" + tableNum;
 	}
 
 }
