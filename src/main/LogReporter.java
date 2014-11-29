@@ -70,6 +70,13 @@ public class LogReporter {
 		}
 		System.out.println();
 		
+		// Print transaction sleep times
+		System.out.println("Transaction waiting times:");
+		for (String s : reporter.getXactionSleeptimes()) {
+			System.out.println(s);
+		}
+		System.out.println();
+		
 		System.out.println("Table access frequencies: ");
 		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
 			System.out.println(s);
@@ -77,7 +84,6 @@ public class LogReporter {
 		
 	}
 	
-
 	/**
 	 * Reads a log file and returns a log reporter object
 	 * 
@@ -126,7 +132,7 @@ public class LogReporter {
 		for (int xactionIndex = 0; xactionIndex < xactionNum; xactionIndex++) {
 			ArrayList<String> xLog = new ArrayList<String>();
 			for (String logEntry : logs) {
-				if (logEntry.contains("XACTION," + xactionIndex)) {
+				if (logEntry.contains("XACTION," + String.format("%02d", xactionIndex))) {
 					xLog.add(logEntry);
 				}
 			}
@@ -158,6 +164,27 @@ public class LogReporter {
 			"ERROR: Number of runtimes doesn't match number of transactions.";
 		
 		return runtimes;
+	}
+	
+	
+	/**
+	 * Gets Transaction sleep times and returns them as a list of Strings,
+	 * with one entry for each pair of transaction and sleep time.
+	 * 
+	 * @return List of strings: Transaction: total waiting time
+	 */
+	private List<String> getXactionSleeptimes() {
+		List<String> sleepTimes = new ArrayList<String>();
+		for (List<String> xLog : xactionLogs) {
+			String[] entrys = xLog.get(xLog.size() - 1).split("\t");
+			Long sleepTime = Long.parseLong(entrys[2].split(": ")[1]);
+			sleepTimes.add(entrys[1] + ": " + millisToHuman(sleepTime));			
+		}
+		
+		assert sleepTimes.size() == xactionNum : 
+			"ERROR: Number of sleep times doesn't match number of transactions.";
+		
+		return sleepTimes;
 	}
 
 	/**

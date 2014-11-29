@@ -114,12 +114,13 @@ public class Transaction implements Runnable{
 		}
 		
 		logEvent("completed transaction");
-		logEvent("total waiting time: " + sleepCounter);
+		logEvent("total read/write time: " + sleepCounter);
 	}
 	
 	
 	private void simulateWrite() {
-		long waitTime = (long) (sleepTime.nextGaussian() + Shell.MEAN_IO_TIME_MILLIS);
+		long waitTime = (long) (Shell.MEAN_IO_TIME_MILLIS * sleepTime.nextGaussian()
+				+ Shell.MEAN_IO_TIME_MILLIS);
 		waitTime = waitTime > 1 ? waitTime : 1;
 		sleepCounter += waitTime;
 		try {
@@ -160,7 +161,7 @@ public class Transaction implements Runnable{
 	
 	@Override
 	public String toString() {
-		return String.format("XACTION,%d,%d", id, size);
+		return String.format("XACTION,%02d,%d", id, size);
 	}
 
 	
