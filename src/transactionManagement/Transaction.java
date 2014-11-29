@@ -79,7 +79,7 @@ public class Transaction implements Runnable{
 			logEvent(String.format("requesting table %s", table.toString()));
 			
 			// Wait for each table in sequence
-			while (!availableLocks.contains(table)) {
+			while (!availableLocks.containsKey(table)) {
 				// Live spin
 				hadToWait = true;
 			}
