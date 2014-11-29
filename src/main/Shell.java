@@ -89,7 +89,16 @@ public class Shell {
 	}
 	
 	public static void printHelp(){
-		System.out.println("Don't you wish this message was more useful?");
+		System.out.println("Option format: <parameter>=<value>\n");
+		System.out.println("Parameters:\tValues:\n");
+		System.out.println("dbsize\t\tAny positive integer, default is 100");
+		System.out.println("struct\t\tbh,mf for Binary Heap and Max Fanout");
+		System.out.println("weight\t\tequal,top,bottom");
+		System.out.println("dummyroot\ttrue,false for whether or not the root should be blank placeholder");
+		System.out.println("batchsize\tNumber of transactions to run.  Any positive integer, default is 100");
+		System.out.println("xactionsize\tNumber of writes per transaction.  Any positive integer, default is 10");
+		System.out.println("xactionvariety\ttrue,false [MIKE WHAT DOES THIS MEAN?]");
+		System.out.println("verbose\t\tNOTHING YET");
 	}
 	
 	public static long getTime() {
