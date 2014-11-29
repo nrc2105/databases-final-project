@@ -1,11 +1,13 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +51,26 @@ public class LogReporter {
 	}
 	
 	
+	/**
+	 * Takes a log from TransactionManager following a run and writes it to 
+	 * a file for later analysis
+	 * 
+	 * @param logSet Set of logs from a run. Full log set preferred.
+	 * @param filename Name for output file. Overwrites previous entry.
+	 */
+	public static void dumpToFile(List<String> logSet, String filename) {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				Paths.get(filename), StandardCharsets.UTF_8)) {
+			
+			for (String s : logSet) {
+				writer.write(s + "\n");
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Takes a LogReporter object and prints various human-friendly information
 	 * 
@@ -123,7 +145,6 @@ public class LogReporter {
 		this.xactionLogs = getXactionLogs();
 	}
 	
-	
 	/**
 	 * Used as part of the constructor to separate out the transaction log records
 	 * and divide them into a list for each transaction
@@ -169,7 +190,12 @@ public class LogReporter {
 		return runtimes;
 	}
 	
-	// TODO comment this method
+	/**
+	 * Takes output of getXactionRuntimes() and converts times from millisecond counts
+	 * to human readable mm:ss.s format
+	 * 
+	 * @return List of runtimes in human-readable format
+	 */
 	private List<String> getHumanXactionRuntimes() {
 		List<String> humanRuntimes = new ArrayList<String>();
 		for (String entry : getXactionRuntimes()) {
@@ -180,7 +206,11 @@ public class LogReporter {
 	}
 	
 	
-	// TODO comment this method
+	/**
+	 * Calculates and returns (in milliseconds) average transaction runtime
+	 * 
+	 * @return average runtime
+	 */
 	private long getAvgXactionRuntime() {
 		long total = 0;
 		for (String entry : getXactionRuntimes()) {
