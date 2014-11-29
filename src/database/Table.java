@@ -27,6 +27,14 @@ public class Table{
 	}
 
 	public synchronized boolean acquireLock(int id){
+		if(currentOwner != -1 && currentOwner != id){
+			try{
+				wait();
+			    }
+			    catch(InterruptedException e){
+			    }
+		}
+		
 		if(currentOwner == -1 || currentOwner == id){
 			currentOwner = id;
 			return true;
@@ -38,6 +46,7 @@ public class Table{
 	public synchronized void releaseLock(int id){
 		if(currentOwner == id){
 			currentOwner = -1;
+			notifyAll();
 		}
 	}
 	
