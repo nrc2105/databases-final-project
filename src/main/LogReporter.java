@@ -63,24 +63,27 @@ public class LogReporter {
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		System.out.println();
 		
-		// Print transaction runtimes
-		System.out.println("Transaction run times:");
-		for (String s : reporter.getXactionRuntimes()) {
-			System.out.println(s);
-		}
-		System.out.println();
+		System.out.printf("Average transaction runtime: %s", 
+				millisToHuman(reporter.getAvgXactionRuntime()));
 		
-		// Print transaction sleep times
-		System.out.println("Transaction waiting times:");
-		for (String s : reporter.getXactionSleeptimes()) {
-			System.out.println(s);
-		}
-		System.out.println();
-		
-		System.out.println("Table access frequencies: ");
-		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
-			System.out.println(s);
-		}
+//		// Print transaction runtimes
+//		System.out.println("Transaction run times:");
+//		for (String s : reporter.getHumanXactionRuntimes()) {
+//			System.out.println(s);
+//		}
+//		System.out.println();
+//		
+//		// Print transaction sleep times
+//		System.out.println("Transaction waiting times:");
+//		for (String s : reporter.getXactionSleeptimes()) {
+//			System.out.println(s);
+//		}
+//		System.out.println();
+//		
+//		System.out.println("Table access frequencies: ");
+//		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
+//			System.out.println(s);
+//		}
 		
 	}
 	
@@ -157,13 +160,34 @@ public class LogReporter {
 			String startEntry = xLog.get(0);
 			String endEntry = xLog.get(xLog.size() - 1);
 			long runtime = getRuntime(startEntry, endEntry);
-			runtimes.add(xLog.get(0).split("\t")[1] + ": " + millisToHuman(runtime));			
+			runtimes.add(xLog.get(0).split("\t")[1] + "\t" + runtime);			
 		}
 		
 		assert runtimes.size() == xactionNum : 
 			"ERROR: Number of runtimes doesn't match number of transactions.";
 		
 		return runtimes;
+	}
+	
+	// TODO comment this method
+	private List<String> getHumanXactionRuntimes() {
+		List<String> humanRuntimes = new ArrayList<String>();
+		for (String entry : getXactionRuntimes()) {
+			String[] parsed = entry.split("\t");
+			humanRuntimes.add(parsed[0] + ": " + millisToHuman(Long.parseLong(parsed[1])));
+		}
+		return humanRuntimes;		
+	}
+	
+	
+	// TODO comment this method
+	private long getAvgXactionRuntime() {
+		long total = 0;
+		for (String entry : getXactionRuntimes()) {
+			total += Long.parseLong(entry.split("\t")[1]);
+		}
+		
+		return total / xactionNum;
 	}
 	
 	
