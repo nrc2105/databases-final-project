@@ -86,15 +86,16 @@ public class LogReporter {
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		System.out.println();
 		
-		System.out.printf("Average transaction runtime: %s\n\n", 
-				millisToHuman(reporter.getAvgXactionRuntime()));
+		System.out.printf("Mean transaction runtime: %s\n\n", 
+				millisToHuman(getAvgRuntime(reporter.getXactionRuntimes())));
 		
-		System.out.println("Time spent by transactions waiting on locks:");
-		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
-			System.out.println(s);
-		}
+		System.out.printf("Mean time spent waiting on locks: %s\n\n", 
+				millisToHuman(getAvgRuntime(reporter.getXactionWaitingTimes())));
 		
-		reporter.dumpLogToConsole();
+//		System.out.println("Time spent by transactions waiting on locks:");
+//		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
+//			System.out.println(s);
+//		}
 		
 //		// Print transaction runtimes
 //		System.out.println("Transaction run times:");
@@ -205,22 +206,6 @@ public class LogReporter {
 			"ERROR: Number of runtimes doesn't match number of transactions.";
 		
 		return runtimes;
-	}
-
-	
-	
-	/**
-	 * Calculates and returns (in milliseconds) average transaction runtime
-	 * 
-	 * @return average runtime
-	 */
-	private long getAvgXactionRuntime() {
-		long total = 0;
-		for (String entry : getXactionRuntimes()) {
-			total += Long.parseLong(entry.split("\t")[1]);
-		}
-		
-		return total / xactionNum;
 	}
 	
 	
@@ -531,6 +516,20 @@ public class LogReporter {
 			humanRuntimes.add(parsed[0] + ": " + millisToHuman(Long.parseLong(parsed[1])));
 		}
 		return humanRuntimes;		
+	}
+	
+	/**
+	 * Calculates and returns (in milliseconds) average time from a standard time list
+	 * 
+	 * @return average runtime
+	 */
+	private static long getAvgRuntime(List<String> list) {
+		long total = 0;
+		for (String entry : list) {
+			total += Long.parseLong(entry.split("\t")[1]);
+		}
+		
+		return total / list.size();
 	}
 
 }
