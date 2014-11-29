@@ -73,6 +73,34 @@ public class TestDbms {
 		assertEquals(dependtest1, dependtest2.get(2));
 	}
 	
+	@Test
+	public void testBHDbmsDummyRoot(){
+		Dbms db = new BHDbms(6,Dbms.EQWEIGHT,true);
+		Table[] tables = db.getTables();
+		assertEquals(6, tables.length);
+		assertEquals("TABLE 1", tables[0].toString());
+	}
+	
+	@Test
+	public void testBHDbmsTopWeight(){
+		Dbms db = new BHDbms(6,Dbms.TOPWEIGHT,false);
+		List<Table> tables = db.getTables(4);
+		assertEquals(4, tables.size());
+		for(Table table: tables){
+			assertNotNull(table);
+		}
+	}
+	
+	@Test
+	public void testBHDbmsBottomWeight(){
+		Dbms db = new BHDbms(6,Dbms.BOTTOMWEIGHT,false);
+		List<Table> tables = db.getTables(4);
+		assertEquals(4, tables.size());
+		for(Table table: tables){
+			assertNotNull(table);
+		}
+	}
+	
 
 	
 }

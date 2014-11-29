@@ -119,6 +119,9 @@ public abstract class Dbms{
 	 * @return the subset of tables
 	 */
 	public List<Table> getTables(int count){
+		if(count > size){
+			throw new RuntimeException();
+		}
 		HashSet<Integer> tableSet = new HashSet<Integer>();
 		while(tableSet.size() < count){
 			tableSet.add(getNextRandom());
@@ -145,8 +148,16 @@ public abstract class Dbms{
 			out = rand.nextInt(range);
 		} else if(weight.equalsIgnoreCase(TOPWEIGHT)){
 			out = Math.abs((int)(rand.nextGaussian()*range));
+			if(out >= range){
+				out = range - 1;
+			}
 		} else{
-			out = ((int)(1 - Math.abs(rand.nextGaussian()))) * range;
+			out = (int)(range - Math.abs(rand.nextGaussian() * range));
+			if(out < 0){
+				out = 0;
+			} else if (out >= range){
+				out = range - 1;
+			}
 		}
 		
 		if(dummyRoot){
