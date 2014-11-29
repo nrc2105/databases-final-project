@@ -73,7 +73,7 @@ public class Transaction implements Runnable{
 		
 		startLocking();
 		
-		logEvent("sent lock request");
+		logEvent("sent all lock requests");
 		
 		for (Table table : requiredLocks) {
 			boolean hadToWait = false;
@@ -118,6 +118,11 @@ public class Transaction implements Runnable{
 	}
 	
 	
+	/**
+	 * Simulates the write I/O time
+	 * Causes thread to sleep for a normally distributed amount of time with mean
+	 * at Shell.MEAN_IO_TIME_MILLIS and absolute minimum of 1ms.
+	 */
 	private void simulateWrite() {
 		long waitTime = (long) (Shell.MEAN_IO_TIME_MILLIS * sleepTime.nextGaussian()
 				+ Shell.MEAN_IO_TIME_MILLIS);

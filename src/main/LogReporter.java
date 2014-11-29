@@ -1,14 +1,17 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,26 @@ public class LogReporter {
 	
 	
 	/**
+	 * Takes a log from TransactionManager following a run and writes it to 
+	 * a file for later analysis
+	 * 
+	 * @param logSet Set of logs from a run. Full log set preferred.
+	 * @param filename Name for output file. Overwrites previous entry.
+	 */
+	public static void dumpToFile(List<String> logSet, String filename) {
+		try (BufferedWriter writer = Files.newBufferedWriter(
+				Paths.get(filename), StandardCharsets.UTF_8)) {
+			
+			for (String s : logSet) {
+				writer.write(s + "\n");
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Takes a LogReporter object and prints various human-friendly information
 	 * 
 	 * @param reporter LogReporter object
@@ -63,12 +86,19 @@ public class LogReporter {
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		System.out.println();
 		
-		System.out.printf("Average transaction runtime: %s", 
+		System.out.printf("Average transaction runtime: %s\n\n", 
 				millisToHuman(reporter.getAvgXactionRuntime()));
+		
+		System.out.println("Time spent by transactions waiting on locks:");
+		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
+			System.out.println(s);
+		}
+		
+		reporter.dumpLogToConsole();
 		
 //		// Print transaction runtimes
 //		System.out.println("Transaction run times:");
-//		for (String s : reporter.getHumanXactionRuntimes()) {
+//		for (String s : getHumanRuntimes(reporter.getXactionRuntimes())) {
 //			System.out.println(s);
 //		}
 //		System.out.println();
@@ -123,6 +153,14 @@ public class LogReporter {
 		this.xactionLogs = getXactionLogs();
 	}
 	
+	/**
+	 * Writes the entire log contents to console for debugging
+	 */
+	private void dumpLogToConsole() {
+		for (String s : logs) {
+			System.out.println(s);
+		}
+	}
 	
 	/**
 	 * Used as part of the constructor to separate out the transaction log records
@@ -168,19 +206,14 @@ public class LogReporter {
 		
 		return runtimes;
 	}
-	
-	// TODO comment this method
-	private List<String> getHumanXactionRuntimes() {
-		List<String> humanRuntimes = new ArrayList<String>();
-		for (String entry : getXactionRuntimes()) {
-			String[] parsed = entry.split("\t");
-			humanRuntimes.add(parsed[0] + ": " + millisToHuman(Long.parseLong(parsed[1])));
-		}
-		return humanRuntimes;		
-	}
+
 	
 	
-	// TODO comment this method
+	/**
+	 * Calculates and returns (in milliseconds) average transaction runtime
+	 * 
+	 * @return average runtime
+	 */
 	private long getAvgXactionRuntime() {
 		long total = 0;
 		for (String entry : getXactionRuntimes()) {
@@ -194,10 +227,11 @@ public class LogReporter {
 	/**
 	 * Gets Transaction sleep times and returns them as a list of Strings,
 	 * with one entry for each pair of transaction and sleep time.
+	 * Sleep time is the time spent simulating I/O events.
 	 * 
-	 * @return List of strings: Transaction: total waiting time
+	 * @return List of strings: Transaction: total sleep time
 	 */
-	private List<String> getXactionSleeptimes() {
+	private List<String> getXactionSleepTimes() {
 		List<String> sleepTimes = new ArrayList<String>();
 		for (List<String> xLog : xactionLogs) {
 			String[] entrys = xLog.get(xLog.size() - 1).split("\t");
@@ -210,27 +244,42 @@ public class LogReporter {
 		
 		return sleepTimes;
 	}
+	
+	
+	private List<String> getXactionWaitingTimes() {
+		List<String> waitTimes = new ArrayList<String>();
+		for (List<String> xLog : xactionLogs) {
+			long waitTime = 0;
+					
+			Iterator<String> it = xLog.iterator();
+			String startWaiting = null;
+			String stopWaiting = null;
+			while (it.hasNext()) {
+				String entry = it.next();
+				if (entry.contains("requesting table")) {
+					startWaiting = entry;
+				} else if (entry.contains("done waiting for table")) {
+					stopWaiting = entry;
+				}
+				
+				if (startWaiting != null &&
+						stopWaiting != null &&
+						getTableName(startWaiting).equals(getTableName(stopWaiting))) {
+					waitTime += getRuntime(startWaiting, stopWaiting);
+					startWaiting = null;
+					stopWaiting = null;
+				}
 
-	/**
-	 * Takes in two log entries and returns the number of milliseconds between them.
-	 * Normally used for calculating the run time of a transaction of batch of transactions.
-	 * 
-	 * @param start Log entry for start of event
-	 * @param end Log entry to end of event
-	 * @return Time elapsed during event
-	 */
-	private long getRuntime(String start, String end) {
+			}
+			waitTimes.add(xLog.get(0).split("\t")[1] + "\t" + waitTime);
+		}
 		
-		assert !(start== null || end == null) : 
-			"ERROR: Failed to find start or end timestamps for the batch.";
+		assert waitTimes.size() == xactionNum : 
+			"ERROR: Number of sleep times doesn't match number of transactions.";
 		
-		long startTime = Long.parseLong(start.split("\t")[0]);
-		long endTime = Long.parseLong(end.split("\t")[0]);
-		
-		assert endTime > startTime : "ERROR: End time is before start time.";
-		
-		return endTime - startTime;
+		return waitTimes;
 	}
+
 
 	/**
 	 * Queries the master log records and extracts the number of transactions in the batch.
@@ -435,6 +484,27 @@ public class LogReporter {
 	}
 	
 	/**
+	 * Takes in two log entries and returns the number of milliseconds between them.
+	 * Normally used for calculating the run time of a transaction of batch of transactions.
+	 * 
+	 * @param start Log entry for start of event
+	 * @param end Log entry to end of event
+	 * @return Time elapsed during event
+	 */
+	private static long getRuntime(String start, String end) {
+		
+		assert !(start== null || end == null) : 
+			"ERROR: Failed to find start or end timestamps for the batch.";
+		
+		long startTime = Long.parseLong(start.split("\t")[0]);
+		long endTime = Long.parseLong(end.split("\t")[0]);
+		
+		assert endTime > startTime : "ERROR: End time is before start time.";
+		
+		return endTime - startTime;
+	}
+	
+	/**
 	 * Converts long millisecond time period into human readable minutes:seconds.fraction
 	 * format
 	 * 
@@ -446,6 +516,21 @@ public class LogReporter {
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
 		return String.format("%d:%02d.%03d", minutes, seconds, millis);
+	}
+	
+	/**
+	 * Takes output of a function that generates a list of strings and long millisecond counts
+	 * and converts times from millisecond counts to human readable mm:ss.s format
+	 * 
+	 * @return List of run times in human-readable format
+	 */
+	private static List<String> getHumanRuntimes(List<String> list) {
+		List<String> humanRuntimes = new ArrayList<String>();
+		for (String entry : list) {
+			String[] parsed = entry.split("\t");
+			humanRuntimes.add(parsed[0] + ": " + millisToHuman(Long.parseLong(parsed[1])));
+		}
+		return humanRuntimes;		
 	}
 
 }
