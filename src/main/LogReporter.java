@@ -227,8 +227,9 @@ public class LogReporter {
 	/**
 	 * Gets Transaction sleep times and returns them as a list of Strings,
 	 * with one entry for each pair of transaction and sleep time.
+	 * Sleep time is the time spent simulating I/O events.
 	 * 
-	 * @return List of strings: Transaction: total waiting time
+	 * @return List of strings: Transaction: total sleep time
 	 */
 	private List<String> getXactionSleepTimes() {
 		List<String> sleepTimes = new ArrayList<String>();
@@ -265,10 +266,10 @@ public class LogReporter {
 						stopWaiting != null &&
 						getTableName(startWaiting).equals(getTableName(stopWaiting))) {
 					waitTime += getRuntime(startWaiting, stopWaiting);
+					startWaiting = null;
+					stopWaiting = null;
 				}
-				
-				
-				
+
 			}
 			waitTimes.add(xLog.get(0).split("\t")[1] + "\t" + waitTime);
 		}
