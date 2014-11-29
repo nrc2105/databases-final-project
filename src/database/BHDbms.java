@@ -1,11 +1,22 @@
 package database;
 
+/*
+ * The BHDbms is a Dbms with a Binary Heap structure
+ * lock system.  All locks must be acquired according to
+ * the heap structure, starting at the root.
+ * 
+ * Author: Nicholas Cummins
+ */
 
-public abstract class BHDbms extends Dbms{
+public class BHDbms extends Dbms{
 	
 
 	public BHDbms(int size){
 		super(size);
+	}
+	
+	public BHDbms(int size, String weight, boolean dummyRoot){
+		super(size, weight, dummyRoot);
 	}
 	
 	@Override

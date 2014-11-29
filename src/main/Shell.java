@@ -14,7 +14,9 @@ public class Shell {
 	public static final String STRUCT = "struct";
 	public static final String DEFAULTSTRUCT= DbmsFactory.BH;
 	public static final String WEIGHT = "weight";
-	public static final String DEFAULTWEIGHT = DbmsFactory.EQWEIGHT;
+	public static final String DUMMYROOT = "dummyroot";
+	public static final String DEFAULTROOT = "false";
+	public static final String DEFAULTWEIGHT = Dbms.EQWEIGHT;
 	public static final String BATCHSIZE = "batchsize";
 	public static final String DEFAULTBSIZE = "100";
 	public static final String XACTIONSIZE = "xactionsize";
@@ -33,9 +35,10 @@ public class Shell {
 			HashMap<String,String> params = getParameterMap(args);
 			String struct = params.get(STRUCT);
 			String weight = params.get(WEIGHT);
+			boolean dummyRoot = Boolean.parseBoolean(params.get(DUMMYROOT));
 			int size = Integer.parseInt(params.get(DBSIZE));
 			System.out.println("INITIALIZING DATABASE");
-			Dbms database = DbmsFactory.getDbms(struct, weight, size);
+			Dbms database = DbmsFactory.getDbms(struct, weight, dummyRoot, size);
 			if(database == null){
 				throw new RuntimeException();
 			}
@@ -69,6 +72,7 @@ public class Shell {
 		params.put(DBSIZE, DEFAULTSIZE);
 		params.put(STRUCT, DEFAULTSTRUCT);
 		params.put(WEIGHT, DEFAULTWEIGHT);
+		params.put(DUMMYROOT, DEFAULTROOT);
 		params.put(BATCHSIZE, DEFAULTBSIZE);
 		params.put(XACTIONSIZE, DEFAULTXSIZE);
 		params.put(XACTIONVARIETY, DEFAULTXVARIETY);

@@ -19,10 +19,35 @@ public abstract class Dbms{
 	 * Constructs a new DBMS with a specified
 	 * number of tables.
 	 *
+	 * @param the integer size of the table.
 	 */
 
 	public Dbms(int size){
 		this.size = size;
+		dummyRoot = false;
+		weight = EQWEIGHT;
+		rand = new Random();
+		this.constructTables();
+		this.constructDependencies();
+	}
+	
+	/**
+	 * Constructs a new DBMS with a specified
+	 * number of tables and a boolean indicating
+	 * whether the root is a table or a dummy.
+	 * 
+	 * @param the integer size.
+	 * @param the integer weight.
+	 * @param the boolean indicating dummy node.
+	 */
+
+	public Dbms(int size, String weight, boolean dummyRoot){
+		this.dummyRoot = dummyRoot;
+		this.weight = weight;
+		this.size = size;
+		if(dummyRoot){
+			this.size++;
+		}
 		rand = new Random();
 		this.constructTables();
 		this.constructDependencies();
@@ -81,7 +106,11 @@ public abstract class Dbms{
 	 */
 
 	public Table[] getTables(){
-		return tables;
+		if(dummyRoot){
+			return Arrays.copyOfRange(tables, 1, size);
+		}else{
+			return tables;
+		}
 	}
 
 	/**
@@ -99,6 +128,31 @@ public abstract class Dbms{
 			tableSubset.add(this.tables[i]);
 		}
 		return tableSubset;
+	}
+	
+	/**
+	 * Returns a random int based on the desired
+	 * distribution.
+	 * @return the next random int
+	 */
+	protected int getNextRandom(){
+		int range = size;
+		int out;
+		if(dummyRoot){
+			range--;
+		}
+		if(weight.equalsIgnoreCase(EQWEIGHT)){
+			out = rand.nextInt(range);
+		} else if(weight.equalsIgnoreCase(TOPWEIGHT)){
+			out = Math.abs((int)(rand.nextGaussian()*range));
+		} else{
+			out = ((int)(1 - Math.abs(rand.nextGaussian()))) * range;
+		}
+		
+		if(dummyRoot){
+			out++;
+		}
+		return out;
 	}
 		
 	/**
@@ -133,7 +187,20 @@ public abstract class Dbms{
 
 	@Override
 	public String toString(){
-		return "DBMS SIZE: " + size;
+		String out = "DBMS SIZE: " + size;
+		if(weight.equalsIgnoreCase(EQWEIGHT)){
+			out += " DIST: EQUAL WEIGHTS";
+		} else if(weight.equalsIgnoreCase(TOPWEIGHT)){
+			out += " DIST: TOP WEIGHTED";
+		} else {
+			out += " DIST: BOTTOM WEIGHTED";
+		}
+		if(dummyRoot){
+			out += " ROOT: DUMMY";
+		}else{
+			out += " ROOT: TABLE";
+		}
+		return out;
 	}
 	
 	/**
@@ -146,21 +213,19 @@ public abstract class Dbms{
 	protected abstract int getParentIndex(int childIndex);
 	
 	/**
-	 * Returns a random int based on the desired
-	 * distribution.
-	 * @return the next random int
-	 */
-	protected abstract int getNextRandom();
-	
-	/**
 	 * Returns the longest path in the Dbms
 	 * @return the path length
 	 */
 	public abstract int getPathLength();
 
+	public static final String EQWEIGHT = "equal";
+	public static final String TOPWEIGHT = "top";
+	public static final String BOTTOMWEIGHT = "bottom";
 	
 	private Table[] tables;
 	private HashMap<Table, List<Table>> paths;
+	private boolean dummyRoot;
+	private String weight;
 	int size;
 	Random rand;
 }
