@@ -96,6 +96,11 @@ public class LogReporter {
 		System.out.printf("Standard deviation: %s\n\n", 
 				millisToHuman(getStdDevRuntime(reporter.getXactionWaitingTimes())));
 		
+		System.out.printf("Mean time spent writing to tables (per xaction): %s\n", 
+				millisToHuman(getAvgRuntime(reporter.getXactionSleepTimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(reporter.getXactionSleepTimes())));
+		
 //		System.out.println("Time spent by transactions waiting on locks:");
 //		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
 //			System.out.println(s);
@@ -225,7 +230,7 @@ public class LogReporter {
 		for (List<String> xLog : xactionLogs) {
 			String[] entrys = xLog.get(xLog.size() - 1).split("\t");
 			Long sleepTime = Long.parseLong(entrys[2].split(": ")[1]);
-			sleepTimes.add(entrys[1] + ": " + millisToHuman(sleepTime));			
+			sleepTimes.add(entrys[1] + "\t" + sleepTime);			
 		}
 		
 		assert sleepTimes.size() == xactionNum : 
@@ -235,6 +240,13 @@ public class LogReporter {
 	}
 	
 	
+	/**
+	 * Determines total time spent by each transaction waiting on locks.
+	 * Returns that in the class-standard List<String> for further processing by
+	 * other class functions.
+	 * 
+	 * @return Total time spent waiting, per transaction
+	 */
 	private List<String> getXactionWaitingTimes() {
 		List<String> waitTimes = new ArrayList<String>();
 		for (List<String> xLog : xactionLogs) {
@@ -525,6 +537,7 @@ public class LogReporter {
 	/**
 	 * Calculates and returns (in milliseconds) average time from a standard time list
 	 * 
+	 * @param List of runtimes in class-standard format
 	 * @return average runtime
 	 */
 	private static long getAvgRuntime(List<String> runTimeList) {
@@ -536,7 +549,13 @@ public class LogReporter {
 		return total / runTimeList.size();
 	}
 	
-	
+	/**
+	 * Calculates and returns (in milliseconds) standard devation of runtimes
+	 * from a standard time list
+	 * 
+	 * @param list List of runtimes in class-standard format
+	 * @return Standard deviation of runtimes in milliseconds
+	 */
 	private static long getStdDevRuntime(List<String> list) {
 		long mean = getAvgRuntime(list);
 		long total = 0;
