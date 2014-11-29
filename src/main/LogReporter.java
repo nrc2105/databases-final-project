@@ -32,10 +32,8 @@ public class LogReporter {
 	 * @param logs List<String> of log data items from a batch run.
 	 */
 	public static void analyze(List<String> logs) {
-		System.out.println("Creating log reporter...");
 		LogReporter reporter = new LogReporter(logs);
 		
-		System.out.println("Generating data report...");
 		printHumanReadable(reporter);
 	}
 	
@@ -59,14 +57,18 @@ public class LogReporter {
 	private static void printHumanReadable(LogReporter reporter) {
 		
 		System.out.println(reporter.managerToHuman());
+		System.out.println();
 		System.out.println(reporter.dbmsToHuman());
+		System.out.println();
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
+		System.out.println();
 		
 		// Print transaction runtimes
 		System.out.println("Transaction run times:");
 		for (String s : reporter.getXactionRuntimes()) {
 			System.out.println(s);
 		}
+		System.out.println();
 		
 		System.out.println("Table access frequencies: ");
 		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
@@ -186,9 +188,7 @@ public class LogReporter {
 	 */
 	private int getXactionNum() {
 
-		String managerRecord = getManagerRecords().get(0);
-		System.out.println(managerRecord);
-		String num = managerRecord.split("\t")[1].split(",")[1]; 
+		String num = getManagerRecords().get(0).split("\t")[1].split(",")[1]; 
 		
 		return Integer.parseInt(num);
 	}
@@ -258,8 +258,10 @@ public class LogReporter {
 	 */
 	private String managerToHuman(String managerRecord) {
 		String[] stats = managerRecord.split("\t")[1].split(",");
-		return String.format("Transaction Manager:\n%s transactions\n%s writes per transaction\n"
-				+ "Transaction variety: %s", stats[0], stats[1], stats[2]);
+		return String.format("Transaction count:\t%s\n"
+				+ "Writes per transaction:\t%s\n"
+				+ "Transaction variety:\t%s", 
+				stats[1], stats[2], stats[3]);
 	}
 	
 	/**
@@ -360,7 +362,7 @@ public class LogReporter {
 	private static List<String> mapToKeySortedList(Map<String, Integer> map) {
 		List<String> list = new ArrayList<String>();
 		for (String key : map.keySet()) {
-			list.add(key + "\t" + map.get(key));
+			list.add(String.format("%-10s\t%d", key, map.get(key)));
 		}
 		
 		Collections.sort(list);
@@ -392,7 +394,7 @@ public class LogReporter {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
-		return String.format("%d:%02d.%d", minutes, seconds, millis);
+		return String.format("%d:%02d.%03d", minutes, seconds, millis);
 	}
 
 }
