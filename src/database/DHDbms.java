@@ -1,29 +1,31 @@
 package database;
 
 /*
- * The BHDbms is a Dbms with a Binary Heap structure
+ * The DHDbms is a Dbms with a D Heap structure
  * lock system.  All locks must be acquired according to
  * the heap structure, starting at the root.
  * 
  * Author: Nicholas Cummins
  */
 
-public class BHDbms extends Dbms{
+public class DHDbms extends Dbms{
 	
 
-	public BHDbms(int size){
+	public DHDbms(int size){
 		super(size);
+		this.d = 2;
 		initialize();
 	}
 	
-	public BHDbms(int size, String weight, boolean dummyRoot){
+	public DHDbms(int size, String weight, boolean dummyRoot, int d){
 		super(size, weight, dummyRoot);
+		this.d = d;
 		initialize();
 	}
-	
+
 	@Override
 	public int getPathLength(){
-		return (int)Math.ceil(Math.log((double)size)/Math.log(2));
+		return (int)Math.ceil(Math.log((double)size)/Math.log(d));
 	}
 
 	/**
@@ -38,15 +40,15 @@ public class BHDbms extends Dbms{
 		if(childIndex == 0){
 			return -1;
 		}
-		
-		return (childIndex - 1) / 2;
+		return (childIndex - 1) / d;
 			
 	}
 	
 	@Override
 	public String toString(){
-		return super.toString() + " STRUCTURE: BINARY HEAP";
+		return super.toString() + " STRUCTURE: "+d+" HEAP";
 	}
 
+	private int d;
 
 }

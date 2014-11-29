@@ -27,9 +27,9 @@ public abstract class Dbms{
 		dummyRoot = false;
 		weight = EQWEIGHT;
 		rand = new Random();
-		this.constructTables();
-		this.constructDependencies();
 	}
+	
+
 	
 	/**
 	 * Constructs a new DBMS with a specified
@@ -49,6 +49,12 @@ public abstract class Dbms{
 			this.size++;
 		}
 		rand = new Random();
+	}
+	
+	/**
+	 * Initializes tables and dependencies.
+	 */
+	protected void initialize(){
 		this.constructTables();
 		this.constructDependencies();
 	}

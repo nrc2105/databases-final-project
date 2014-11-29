@@ -12,10 +12,12 @@ public class Shell {
 	public static final String DBSIZE = "dbsize";
 	public static final String DEFAULTSIZE = "100";
 	public static final String STRUCT = "struct";
-	public static final String DEFAULTSTRUCT= DbmsFactory.BH;
+	public static final String DEFAULTSTRUCT= DbmsFactory.DH;
 	public static final String WEIGHT = "weight";
 	public static final String DUMMYROOT = "dummyroot";
 	public static final String DEFAULTROOT = "false";
+	public static final String HEAPSIZE = "heapsize";
+	public static final String DEFAULTHSIZE = "2";
 	public static final String DEFAULTWEIGHT = Dbms.EQWEIGHT;
 	public static final String BATCHSIZE = "batchsize";
 	public static final String DEFAULTBSIZE = "100";
@@ -37,8 +39,10 @@ public class Shell {
 			String weight = params.get(WEIGHT);
 			boolean dummyRoot = Boolean.parseBoolean(params.get(DUMMYROOT));
 			int size = Integer.parseInt(params.get(DBSIZE));
+			int heapSize = Integer.parseInt(params.get(HEAPSIZE));
+			System.out.println(""+heapSize);
 			System.out.println("INITIALIZING DATABASE");
-			Dbms database = DbmsFactory.getDbms(struct, weight, dummyRoot, size);
+			Dbms database = DbmsFactory.getDbms(struct, weight, dummyRoot, size, heapSize);
 			if(database == null){
 				throw new RuntimeException();
 			}
@@ -77,6 +81,7 @@ public class Shell {
 		params.put(XACTIONSIZE, DEFAULTXSIZE);
 		params.put(XACTIONVARIETY, DEFAULTXVARIETY);
 		params.put(VERBOSE, DEFAULTVERBOSE);
+		params.put(HEAPSIZE, DEFAULTHSIZE);
 		for(String a : args){
 			String[] parsed = a.split("=");
 			if(parsed.length == 2){
@@ -94,6 +99,7 @@ public class Shell {
 		System.out.println("dbsize\t\tAny positive integer, default is 100");
 		System.out.println("struct\t\tbh,mf for Binary Heap and Max Fanout");
 		System.out.println("weight\t\tequal,top,bottom");
+		System.out.println("heapsize\t\tDegree of heap, any positive integer.");
 		System.out.println("dummyroot\ttrue,false for whether or not the root should be blank placeholder");
 		System.out.println("batchsize\tNumber of transactions to run.  Any positive integer, default is 100");
 		System.out.println("xactionsize\tNumber of writes per transaction.  Any positive integer, default is 10");
