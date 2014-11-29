@@ -86,11 +86,15 @@ public class LogReporter {
 		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
 		System.out.println();
 		
-		System.out.printf("Mean transaction runtime: %s\n\n", 
+		System.out.printf("Mean transaction runtime: %s\n", 
 				millisToHuman(getAvgRuntime(reporter.getXactionRuntimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(reporter.getXactionRuntimes())));
 		
-		System.out.printf("Mean time spent waiting on locks: %s\n\n", 
+		System.out.printf("Mean time spent waiting on locks (per xaction): %s\n", 
 				millisToHuman(getAvgRuntime(reporter.getXactionWaitingTimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(reporter.getXactionWaitingTimes())));
 		
 //		System.out.println("Time spent by transactions waiting on locks:");
 //		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
@@ -523,13 +527,25 @@ public class LogReporter {
 	 * 
 	 * @return average runtime
 	 */
-	private static long getAvgRuntime(List<String> list) {
+	private static long getAvgRuntime(List<String> runTimeList) {
 		long total = 0;
-		for (String entry : list) {
+		for (String entry : runTimeList) {
 			total += Long.parseLong(entry.split("\t")[1]);
 		}
 		
-		return total / list.size();
+		return total / runTimeList.size();
+	}
+	
+	
+	private static long getStdDevRuntime(List<String> list) {
+		long mean = getAvgRuntime(list);
+		long total = 0;
+		for (String entry : list) {
+			long value = Long.parseLong(entry.split("\t")[1]);
+			total += (value - mean)*(value - mean);
+		}
+		
+		return Math.round(Math.sqrt(total / list.size()));
 	}
 
 }

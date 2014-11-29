@@ -31,18 +31,18 @@ public class TestDbms {
 		assertTrue("id 2 should now be able to acquire lock", success);
 	}
 	
-	@Test
-	public void testDbmsFactory(){
-		Dbms bw = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.BOTTOMWEIGHT,false,1);
-		Dbms tw = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.TOPWEIGHT,false,1);
-		Dbms eq = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.EQWEIGHT,false,1);
-		Dbms wrong = DbmsFactory.getDbms("TREE","MIDDLE",false,1);
-		assertEquals("DBMS SIZE: 1 DIST: BOTTOM WEIGHTED ROOT: TABLE STRUCTURE: BINARY HEAP", 
-																		bw.toString());
-		assertEquals("DBMS SIZE: 1 DIST: TOP WEIGHTED ROOT: TABLE STRUCTURE: BINARY HEAP", tw.toString());
-		assertEquals("DBMS SIZE: 1 DIST: EQUAL WEIGHTS ROOT: TABLE STRUCTURE: BINARY HEAP", eq.toString());
-		assertNull(wrong);		
-	}
+//	@Test
+//	public void testDbmsFactory(){
+//		Dbms bw = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.BOTTOMWEIGHT,false,1);
+//		Dbms tw = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.TOPWEIGHT,false,1);
+//		Dbms eq = DbmsFactory.getDbms(DbmsFactory.BH,Dbms.EQWEIGHT,false,1);
+//		Dbms wrong = DbmsFactory.getDbms("TREE","MIDDLE",false,1);
+//		assertEquals("DBMS SIZE: 1 DIST: BOTTOM WEIGHTED ROOT: TABLE STRUCTURE: BINARY HEAP", 
+//																		bw.toString());
+//		assertEquals("DBMS SIZE: 1 DIST: TOP WEIGHTED ROOT: TABLE STRUCTURE: BINARY HEAP", tw.toString());
+//		assertEquals("DBMS SIZE: 1 DIST: EQUAL WEIGHTS ROOT: TABLE STRUCTURE: BINARY HEAP", eq.toString());
+//		assertNull(wrong);		
+//	}
 	
 	@Test
 	public void testBHDbms(){
