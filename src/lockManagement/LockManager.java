@@ -32,8 +32,8 @@ public class LockManager{
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		new Thread(releaser).start();
 		for(List<Table> list : dependencies){
-			new Thread(new LockSeeker(id, new ArrayList<Table>(list),
-						unnecessaryLocks, requiredLocks)).start();
+			(new Thread(new LockSeeker(id, new ArrayList<Table>(list),
+						unnecessaryLocks, requiredLocks))).start();
 
 		}
 
