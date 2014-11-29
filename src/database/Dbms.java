@@ -238,5 +238,5 @@ public abstract class Dbms{
 	private boolean dummyRoot;
 	private String weight;
 	int size;
-	Random rand;
+	private Random rand;
 }

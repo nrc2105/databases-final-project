@@ -8,11 +8,14 @@ package database;
 
  public class DbmsFactory{
 	public static final String BH = "bh";
+	public static final String MF = "mf";
 	
 	public static Dbms getDbms(String struct, String weight, boolean dummyRoot, int size){
 		if(struct.equalsIgnoreCase(BH)){
 			return new BHDbms(size, weight, dummyRoot);
-		} else {
+		} else if (struct.equalsIgnoreCase(MF)){
+			return new MFDbms(size, weight, dummyRoot);
+		} else{
 			return null;
 		}
 	}
