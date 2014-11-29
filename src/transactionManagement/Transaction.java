@@ -128,7 +128,9 @@ public class Transaction implements Runnable{
 	 *	helpers.
 	 */
 	private void startLocking(){
-		(new LockManager(database)).getAccess(id, requiredLocks, availableLocks, finishedLocks);	
+		LockManager locker = new LockManager(database);
+		
+		locker.getAccess(id, requiredLocks, availableLocks, finishedLocks);	
 		
 	}
 	
