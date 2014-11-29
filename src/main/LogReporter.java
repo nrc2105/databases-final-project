@@ -70,17 +70,17 @@ public class LogReporter {
 		}
 		System.out.println();
 		
-		// Print transaction sleep times
-		System.out.println("Transaction waiting times:");
-		for (String s : reporter.getXactionSleeptimes()) {
-			System.out.println(s);
-		}
-		System.out.println();
-		
-		System.out.println("Table access frequencies: ");
-		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
-			System.out.println(s);
-		}
+//		// Print transaction sleep times
+//		System.out.println("Transaction waiting times:");
+//		for (String s : reporter.getXactionSleeptimes()) {
+//			System.out.println(s);
+//		}
+//		System.out.println();
+//		
+//		System.out.println("Table access frequencies: ");
+//		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
+//			System.out.println(s);
+//		}
 		
 	}
 	
