@@ -73,7 +73,7 @@ public class Transaction implements Runnable{
 		
 		startLocking();
 		
-		logEvent("sent lock request");
+		logEvent("sent all lock requests");
 		
 		for (Table table : requiredLocks) {
 			boolean hadToWait = false;
