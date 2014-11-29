@@ -25,12 +25,14 @@ import database.Table;
 public class Transaction implements Runnable{
 
 	private int id;								// Transaction ID number
+	private int size;							// Number of operations
 	private Dbms database;						// Reference to master DB
 	private List<Table> requiredLocks;			// List of locks required by this transaction
 	private ConcurrentHashMap<Table, Integer> availableLocks; // Set of locks available for writing
 	private BlockingQueue<Table> finishedLocks;	// Locks are placed in here after writing
 	private List<String> log;					// Log of this transaction's events
 	private Random sleepTime;					// Used to randomize sleep timers for sim writes
+	private long sleepCounter;					// Running total of time spent sleeping
 		
 	
 	/**
@@ -42,6 +44,7 @@ public class Transaction implements Runnable{
 	 */
 	public Transaction(int id, int size, Dbms database){
 		this.id = id;
+		this.size = size;
 		this.database = database;
 		this.log = new ArrayList<String>();
 		this.sleepTime = new Random();
@@ -111,13 +114,16 @@ public class Transaction implements Runnable{
 		}
 		
 		logEvent("completed transaction");
+		logEvent("total waiting time: " + sleepCounter);
 	}
 	
 	
 	private void simulateWrite() {
 		long waitTime = (long) (sleepTime.nextGaussian() + Shell.MEAN_IO_TIME_MILLIS);
+		waitTime = waitTime > 1 ? waitTime : 1;
+		sleepCounter += waitTime;
 		try {
-			Thread.sleep( waitTime < 1 ? waitTime : 1 );
+			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}	
@@ -154,7 +160,7 @@ public class Transaction implements Runnable{
 	
 	@Override
 	public String toString() {
-		return String.format("XACTION,%d", id);
+		return String.format("XACTION,%d,%d", id, size);
 	}
 
 	
