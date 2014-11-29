@@ -53,7 +53,6 @@ public class LockSeeker implements Runnable{
 			}
 			lastLock = lock;
 		}
-
 		requiredLocks.put(lastLock, 1);
 	}
 

@@ -41,15 +41,15 @@ public class LockReleaser implements Runnable{
 	 */
 
 	private void initMap(){
-		dependecyMap = new HashMap<Table,Integer>();
+		dependencyMap = new HashMap<Table,Integer>();
 		Integer value;
 		for(List<Table> list : dependencies){
 			for(Table table : list){
-				value = dependecyMap.get(table);
+				value = dependencyMap.get(table);
 				if(value == null){
-					dependecyMap.put(table, 1);
+					dependencyMap.put(table, 1);
 				} else {
-					dependecyMap.put(table, value + 1);
+					dependencyMap.put(table, value + 1);
 				}
 			}
 		}
@@ -69,17 +69,17 @@ public class LockReleaser implements Runnable{
 			try{
 				Table lock = unnecessaryLocks.take();
 			
-				Integer value = dependecyMap.get(lock);
+				Integer value = dependencyMap.get(lock);
 				if(value == null){
 					//Throw an exception
 				} else if (value <= 1){
-					dependecyMap.remove(lock);
+					dependencyMap.remove(lock);
 					lock.releaseLock(id);
-					if(dependecyMap.isEmpty()){
+					if(dependencyMap.isEmpty()){
 						return; //No more dependencies, finished.
 					}
 				} else {
-					dependecyMap.put(lock, value - 1);
+					dependencyMap.put(lock, value - 1);
 				}
 			}catch(InterruptedException e){
 				e.printStackTrace();
@@ -90,6 +90,6 @@ public class LockReleaser implements Runnable{
 
 	private int id;
 	private BlockingQueue<Table> unnecessaryLocks;
-	private HashMap<Table, Integer> dependecyMap;
+	private HashMap<Table, Integer> dependencyMap;
 	private List<List<Table>> dependencies;
 }
