@@ -98,7 +98,7 @@ public class Transaction implements Runnable{
 			logEvent(String.format("done with table %s", table.toString()));
 			
 			// Debug check against race conditions
-			assert availableLocks.contains(table) : "RACE CONDITION ERROR: "
+			assert availableLocks.containsKey(table) : "RACE CONDITION ERROR: "
 					+ "Table was unlocked while writing to it.";
 			
 			/* Mark lock for releasing
