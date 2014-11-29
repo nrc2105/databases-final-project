@@ -117,7 +117,7 @@ public class Transaction implements Runnable{
 	private void simulateWrite() {
 		long waitTime = (long) (sleepTime.nextGaussian() + Shell.MEAN_IO_TIME_MILLIS);
 		try {
-			this.wait( waitTime < 1 ? waitTime : 1 );
+			Thread.sleep( waitTime < 1 ? waitTime : 1 );
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}	
