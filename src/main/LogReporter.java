@@ -186,7 +186,9 @@ public class LogReporter {
 	 */
 	private int getXactionNum() {
 
-		String num = getManagerRecords().get(0).split("\t")[0].split(",")[1]; 
+		String managerRecord = getManagerRecords().get(0);
+		System.out.println(managerRecord);
+		String num = managerRecord.split("\t")[1].split(",")[1]; 
 		
 		return Integer.parseInt(num);
 	}
