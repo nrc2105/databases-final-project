@@ -101,6 +101,41 @@ public class TransactionManager {
 		logEvent("completed transaction batch");
 	}
 	
+	/**
+	 * Wraps all transactions in Thread, starts all transactions, and blocks on their
+	 * completion. Catches any interrupted exceptions and prints stack trace.
+	 * if concurrent is false, will run each thread to completion sequentially.
+	 * 
+	 *  @param the boolean indicating concurrent execution.
+	 */
+	public void runBatch(boolean concurrent) {
+		if(concurrent){
+			runBatch();
+		}else{
+			ArrayList<Thread> threadList = new ArrayList<Thread>();
+		
+			// Wrap transactions in Threads
+			for (Transaction x : transactionSet) {
+				Thread t = new Thread(x);
+				threadList.add(t);
+			}
+		
+			logEvent("beginning transaction batch");
+		
+			// Start transactions
+			for (Thread t : threadList) {
+				t.start();
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+				
+			logEvent("completed transaction batch");
+		}
+	}
+	
 	
 	@Override
 	public String toString() {

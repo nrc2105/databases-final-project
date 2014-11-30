@@ -27,6 +27,8 @@ public class Shell {
 	public static final String DEFAULTXVARIETY = "false";
 	public static final String VERBOSE = "verbose";
 	public static final String DEFAULTVERBOSE = "true";
+	public static final String CONCURRENT = "concurrent";
+	public static final String DEFAULTCONCURRENT = "true";
 
 	public static void main(String[] args) {
 		if(args.length != 0 && (args[0].equals("help") || args[0].equals("-h"))){
@@ -58,7 +60,7 @@ public class Shell {
 		
 			// Run batch
 			System.out.println("RUNNING TRANSACTION BATCH");
-			manager.runBatch();
+			manager.runBatch(Boolean.parseBoolean(params.get(CONCURRENT)));
 		
 		
 			// Return results (log stuff)
@@ -81,6 +83,7 @@ public class Shell {
 		params.put(XACTIONVARIETY, DEFAULTXVARIETY);
 		params.put(VERBOSE, DEFAULTVERBOSE);
 		params.put(HEAPSIZE, DEFAULTHSIZE);
+		params.put(CONCURRENT, DEFAULTCONCURRENT);
 		for(String a : args){
 			String[] parsed = a.split("=");
 			if(parsed.length == 2){

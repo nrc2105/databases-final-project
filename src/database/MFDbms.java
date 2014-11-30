@@ -7,13 +7,10 @@ package database;
  */
 
 public class MFDbms extends Dbms {
-
-	public MFDbms(int size) {
-		super(size);
-	}
 	
 	public MFDbms(int size, String weight, boolean dummyRoot){
 		super(size, weight, dummyRoot);
+		super.initialize();
 	}
 
 	@Override
