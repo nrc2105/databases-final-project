@@ -40,7 +40,6 @@ public class Shell {
 			boolean dummyRoot = Boolean.parseBoolean(params.get(DUMMYROOT));
 			int size = Integer.parseInt(params.get(DBSIZE));
 			int heapSize = Integer.parseInt(params.get(HEAPSIZE));
-			System.out.println(""+heapSize);
 			System.out.println("INITIALIZING DATABASE");
 			Dbms database = DbmsFactory.getDbms(struct, weight, dummyRoot, size, heapSize);
 			if(database == null){

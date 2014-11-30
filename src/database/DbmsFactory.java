@@ -10,6 +10,7 @@ package database;
 	public static final String BH = "bh";
 	public static final String MF = "mf";
 	public static final String DH = "dh";
+	public static final String LB = "lb";
 	
 	public static Dbms getDbms(String struct, String weight, 
 						boolean dummyRoot, int size, int heapSize){
@@ -19,6 +20,8 @@ package database;
 			return new MFDbms(size, weight, dummyRoot);
 		} else if(struct.equalsIgnoreCase(DH)){ 	
 			return new DHDbms(size, weight, dummyRoot, heapSize);
+		} else if(struct.equalsIgnoreCase(LB)){
+			return new LBDbms(size, weight, dummyRoot);
 		}else{
 			return null;
 		}

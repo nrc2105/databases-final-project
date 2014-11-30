@@ -10,6 +10,7 @@ import java.util.List;
 import database.BHDbms;
 import database.DHDbms;
 import database.DbmsFactory;
+import database.LBDbms;
 import database.Table;
 import database.Dbms;
 import static org.junit.Assert.*;
@@ -97,6 +98,36 @@ public class TestDbms {
 		ArrayList<Table> tableList = new ArrayList<Table>();
 		tableList.add(tables[0]);
 		tableList.add(tables[0]);
+		tableList.add(tables[6]);
+		List<List<Table>> dependtest2 = db.getDependencies(tableList);
+		assertEquals(3, dependtest2.size());
+		assertEquals(dependtest2.get(0),dependtest2.get(1));
+		assertEquals(dependtest1, dependtest2.get(2));
+	}
+	
+	@Test
+	public void testLBDbms(){
+		Dbms db = new LBDbms(7,Dbms.EQWEIGHT,false);
+		Table[] tables = db.getTables();
+		assertEquals("Size should be 7", 7, tables.length);
+		assertEquals("Height should be 4", 4, db.getPathLength());
+		List<Table> subTables = db.getTables(3);
+		assertEquals("Size should be 3", 3, subTables.size());
+		for(Table table : subTables){
+			assertEquals("class database.Table", table.getClass().toString());
+		}
+		HashSet<Table> tableSet = new HashSet<Table>(subTables);
+		assertEquals("Size should still be 3",3, tableSet.size());
+		
+		List<Table> dependtest1 = db.getDependencies(tables[6]);
+		assertEquals(4, dependtest1.size());
+		assertEquals(tables[0], dependtest1.get(0));
+		assertEquals(tables[1], dependtest1.get(1));
+		assertEquals(tables[2], dependtest1.get(2));
+		assertEquals(tables[6], dependtest1.get(3));
+		ArrayList<Table> tableList = new ArrayList<Table>();
+		tableList.add(tables[4]);
+		tableList.add(tables[4]);
 		tableList.add(tables[6]);
 		List<List<Table>> dependtest2 = db.getDependencies(tableList);
 		assertEquals(3, dependtest2.size());

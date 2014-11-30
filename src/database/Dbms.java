@@ -242,7 +242,7 @@ public abstract class Dbms{
 	private Table[] tables;
 	private HashMap<Table, List<Table>> paths;
 	private boolean dummyRoot;
-	private String weight;
+	String weight;
 	int size;
 	private Random rand;
 }
