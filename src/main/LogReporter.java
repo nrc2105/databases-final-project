@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import transactionManagement.TransactionManager;
 
 /**
  * Handles parsing and analyzing log data from each run. Designed to be run as part of
@@ -32,25 +33,18 @@ public class LogReporter {
 	/**
 	 * Used to analyze log data from memory. Normally called by Shell at the completion of a run.
 	 * 
+	 * NOTE: THIS METHOD IS NOW DEPRECATED. USE PUBLIC CONSTRUCTOR TO CREATE LogReporter
+	 * AND USE PUBLIC INSTANCE METHODS TO OBTAIN DESIRED INFORMATION
+	 * 
 	 * @param logs List<String> of log data items from a batch run.
 	 */
+	@Deprecated
 	public static void analyze(List<String> logs) {
 		LogReporter reporter = new LogReporter(logs);
 		
-		printHumanReadable(reporter);
-	}
-	
-	/**
-	 * Used to analyze saved log data from a log file
-	 * 
-	 * @param fileName Name of log file
-	 */
-	public static void analyze(String fileName) {
-		LogReporter reporter = readFromFile(FileSystems.getDefault().getPath(fileName));
-		
-		printHumanReadable(reporter);
-	}
-	
+		reporter.printSummary();
+		reporter.printAggregate();
+	}	
 	
 	/**
 	 * Takes a log from TransactionManager following a run and writes it to 
@@ -59,11 +53,11 @@ public class LogReporter {
 	 * @param logSet Set of logs from a run. Full log set preferred.
 	 * @param filename Name for output file. Overwrites previous entry.
 	 */
-	public static void dumpToFile(List<String> logSet, String filename) {
+	public void dumpToFile(String filename) {
 		try (BufferedWriter writer = Files.newBufferedWriter(
 				Paths.get(filename), StandardCharsets.UTF_8)) {
 			
-			for (String s : logSet) {
+			for (String s : logs) {
 				writer.write(s + "\n");
 			}
 			
@@ -71,50 +65,79 @@ public class LogReporter {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Prints summary information for a run
+	 */
+	public void printSummary() {
+		System.out.println(managerToHuman());
+		System.out.println();
+		System.out.println(dbmsToHuman());
+		System.out.println();
+		System.out.printf("Total run time: %s\n", millisToHuman(totalRunTime()));
+		System.out.println();
+	}
 
 	/**
-	 * Takes a LogReporter object and prints various human-friendly information
-	 * 
-	 * @param reporter LogReporter object
+	 * Prints various human-friendly aggregate information
 	 */
-	private static void printHumanReadable(LogReporter reporter) {
+	public void printAggregate() {
 		
-		System.out.println(reporter.managerToHuman());
-		System.out.println();
-		System.out.println(reporter.dbmsToHuman());
-		System.out.println();
-		System.out.printf("Total run time: %s\n", millisToHuman(reporter.totalRunTime()));
-		System.out.println();
+		System.out.printf("Mean transaction runtime: %s\n", 
+				millisToHuman(getAvgRuntime(getXactionRuntimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(getXactionRuntimes())));
 		
-		System.out.printf("Average transaction runtime: %s\n\n", 
-				millisToHuman(reporter.getAvgXactionRuntime()));
+		System.out.printf("Mean time spent waiting on locks (per xaction): %s\n", 
+				millisToHuman(getAvgRuntime(getXactionWaitingTimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(getXactionWaitingTimes())));
 		
-		System.out.println("Time spent by transactions waiting on locks:");
-		for (String s : getHumanRuntimes(reporter.getXactionWaitingTimes())) {
+		System.out.printf("Mean time spent writing to tables (per xaction): %s\n", 
+				millisToHuman(getAvgRuntime(getXactionSleepTimes())));
+		System.out.printf("Standard deviation: %s\n\n", 
+				millisToHuman(getStdDevRuntime(getXactionSleepTimes())));
+		
+	}
+	
+	/**
+	 * Prints time spent on I/O for each transaction
+	 */
+	public void printXactionIOTimes() {
+		System.out.println("Transaction waiting times:");
+		for (String s : getXactionSleepTimes()) {
 			System.out.println(s);
 		}
-		
-		reporter.dumpLogToConsole();
-		
-//		// Print transaction runtimes
-//		System.out.println("Transaction run times:");
-//		for (String s : getHumanRuntimes(reporter.getXactionRuntimes())) {
-//			System.out.println(s);
-//		}
-//		System.out.println();
-//		
-//		// Print transaction sleep times
-//		System.out.println("Transaction waiting times:");
-//		for (String s : reporter.getXactionSleeptimes()) {
-//			System.out.println(s);
-//		}
-//		System.out.println();
-//		
-//		System.out.println("Table access frequencies: ");
-//		for (String s : mapToValueSortedList(reporter.getTableFreqMap())) {
-//			System.out.println(s);
-//		}
-		
+	}
+	
+	/**
+	 * Prints time spent waiting on locks for each transaction
+	 */
+	public void printXactionWaitingTimes() {
+		System.out.println("Time spent by transactions waiting on locks:");
+		for (String s : getHumanRuntimes(getXactionWaitingTimes())) {
+			System.out.println(s);
+		}
+	}
+	
+	/**
+	 * Prints total run time for each transaction
+	 */
+	public void printXactionRuntimes() {
+		System.out.println("Transaction run times:");
+		for (String s : getHumanRuntimes(getXactionRuntimes())) {
+			System.out.println(s);
+		}
+	}
+	
+	/**
+	 * Prints number of accesses to each Table
+	 */
+	public void printTableAcessFreq() {
+		System.out.println("Table access frequencies: ");
+		for (String s : mapToValueSortedList(getTableFreqMap())) {
+			System.out.println(s);
+		}
 	}
 	
 	/**
@@ -123,7 +146,7 @@ public class LogReporter {
 	 * @param inputData Path object to log file
 	 * @return LogReporter built with read log data
 	 */
-	private static LogReporter readFromFile(Path inputData) {
+	public static LogReporter readFromFile(Path inputData) {
 		List<String> logs = new ArrayList<String>();
 		try (BufferedReader reader = Files.newBufferedReader(inputData, StandardCharsets.UTF_8)) {
 			
@@ -131,22 +154,33 @@ public class LogReporter {
 				logs.add(reader.readLine());
 			}
 			
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		return new LogReporter(logs);
 	}
-
 	
 	/**
 	 * Constructor turns a List of log entries into a LogReporter object.
 	 * 
 	 * @param logSet List<String> of log entries from file or a completed run.
 	 */
-	private LogReporter(List<String> logSet) {
+	public LogReporter(List<String> logSet) {
 		this.logs = new ArrayList<String>(logSet);
+		Collections.sort(logs);
+		
+		this.xactionNum = getXactionNum();
+		this.xactionLogs = getXactionLogs();
+	}
+	
+	/**
+	 * Constructor turns a TransactionManager into a LogReporter object by reading its logs.
+	 * 
+	 * @param logSet List<String> of log entries from file or a completed run.
+	 */
+	public LogReporter(TransactionManager manager) {
+		this.logs = new ArrayList<String>(manager.getFullResults());
 		Collections.sort(logs);
 		
 		this.xactionNum = getXactionNum();
@@ -156,7 +190,7 @@ public class LogReporter {
 	/**
 	 * Writes the entire log contents to console for debugging
 	 */
-	private void dumpLogToConsole() {
+	public void dumpLogToConsole() {
 		for (String s : logs) {
 			System.out.println(s);
 		}
@@ -206,22 +240,6 @@ public class LogReporter {
 		
 		return runtimes;
 	}
-
-	
-	
-	/**
-	 * Calculates and returns (in milliseconds) average transaction runtime
-	 * 
-	 * @return average runtime
-	 */
-	private long getAvgXactionRuntime() {
-		long total = 0;
-		for (String entry : getXactionRuntimes()) {
-			total += Long.parseLong(entry.split("\t")[1]);
-		}
-		
-		return total / xactionNum;
-	}
 	
 	
 	/**
@@ -236,7 +254,7 @@ public class LogReporter {
 		for (List<String> xLog : xactionLogs) {
 			String[] entrys = xLog.get(xLog.size() - 1).split("\t");
 			Long sleepTime = Long.parseLong(entrys[2].split(": ")[1]);
-			sleepTimes.add(entrys[1] + ": " + millisToHuman(sleepTime));			
+			sleepTimes.add(entrys[1] + "\t" + sleepTime);			
 		}
 		
 		assert sleepTimes.size() == xactionNum : 
@@ -246,6 +264,13 @@ public class LogReporter {
 	}
 	
 	
+	/**
+	 * Determines total time spent by each transaction waiting on locks.
+	 * Returns that in the class-standard List<String> for further processing by
+	 * other class functions.
+	 * 
+	 * @return Total time spent waiting, per transaction
+	 */
 	private List<String> getXactionWaitingTimes() {
 		List<String> waitTimes = new ArrayList<String>();
 		for (List<String> xLog : xactionLogs) {
@@ -531,6 +556,39 @@ public class LogReporter {
 			humanRuntimes.add(parsed[0] + ": " + millisToHuman(Long.parseLong(parsed[1])));
 		}
 		return humanRuntimes;		
+	}
+	
+	/**
+	 * Calculates and returns (in milliseconds) average time from a standard time list
+	 * 
+	 * @param List of runtimes in class-standard format
+	 * @return average runtime
+	 */
+	private static long getAvgRuntime(List<String> runTimeList) {
+		long total = 0;
+		for (String entry : runTimeList) {
+			total += Long.parseLong(entry.split("\t")[1]);
+		}
+		
+		return total / runTimeList.size();
+	}
+	
+	/**
+	 * Calculates and returns (in milliseconds) standard devation of runtimes
+	 * from a standard time list
+	 * 
+	 * @param list List of runtimes in class-standard format
+	 * @return Standard deviation of runtimes in milliseconds
+	 */
+	private static long getStdDevRuntime(List<String> list) {
+		long mean = getAvgRuntime(list);
+		long total = 0;
+		for (String entry : list) {
+			long value = Long.parseLong(entry.split("\t")[1]);
+			total += (value - mean)*(value - mean);
+		}
+		
+		return Math.round(Math.sqrt(total / list.size()));
 	}
 
 }
