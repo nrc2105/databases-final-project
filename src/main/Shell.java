@@ -8,7 +8,7 @@ import database.DbmsFactory;
 
 public class Shell {
 	
-	public static final int MEAN_IO_TIME_MILLIS = 10;
+	public static final int MEAN_IO_TIME_MILLIS = 100;
 	public static final String DBSIZE = "dbsize";
 	public static final String DEFAULTSIZE = "100";
 	public static final String STRUCT = "struct";
