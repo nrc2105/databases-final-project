@@ -29,6 +29,8 @@ public class Shell {
 	public static final String DEFAULTVERBOSE = "true";
 	public static final String CONCURRENT = "concurrent";
 	public static final String DEFAULTCONCURRENT = "true";
+	public static final String FILENAME = "filename";
+	public static final String DEFAULTFILE = "NOPE";
 
 	public static void main(String[] args) {
 		if(args.length != 0 && (args[0].equals("help") || args[0].equals("-h"))){
@@ -74,7 +76,9 @@ public class Shell {
 			reporter.printSummary();
 			reporter.printAggregate();
 			reporter.printTableAcessFreq();
-//			reporter.dumpToFile(filename);
+			if(!params.get(FILENAME).equals(DEFAULTFILE)){
+				reporter.dumpToFile(params.get(FILENAME));
+			}
 		
 		}
 	}
@@ -93,6 +97,7 @@ public class Shell {
 		params.put(VERBOSE, DEFAULTVERBOSE);
 		params.put(HEAPSIZE, DEFAULTHSIZE);
 		params.put(CONCURRENT, DEFAULTCONCURRENT);
+		params.put(FILENAME, DEFAULTFILE);
 		for(String a : args){
 			String[] parsed = a.split("=");
 			if(parsed.length == 2){
