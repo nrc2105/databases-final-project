@@ -10,13 +10,14 @@ package database;
 
 public class DHDbms extends Dbms{
 	
-
-	public DHDbms(int size){
-		super(size);
-		this.d = 2;
-		initialize();
-	}
-	
+	/**
+	 * Constructs a new heap with order d.
+	 * 
+	 * @param size
+	 * @param weight
+	 * @param dummyRoot
+	 * @param d
+	 */
 	public DHDbms(int size, String weight, boolean dummyRoot, int d){
 		super(size, weight, dummyRoot);
 		this.d = d;
@@ -30,7 +31,7 @@ public class DHDbms extends Dbms{
 
 	/**
 	 * Returns parent index of current index based on
-	 * the implementation of the Dbms.
+	 * the order of the heap.
 	 *
 	 * @param the index of the child.
 	 * @return the index of the parent.

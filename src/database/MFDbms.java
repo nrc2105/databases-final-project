@@ -8,6 +8,13 @@ package database;
 
 public class MFDbms extends Dbms {
 	
+	/**
+	 * Constructs a new MFDbms (a tree with a single internal
+	 * node and otherwise only leaves).
+	 * @param size
+	 * @param weight
+	 * @param dummyRoot
+	 */
 	public MFDbms(int size, String weight, boolean dummyRoot){
 		super(size, weight, dummyRoot);
 		super.initialize();

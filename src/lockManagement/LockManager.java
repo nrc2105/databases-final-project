@@ -26,6 +26,17 @@ public class LockManager{
 
 	}
 
+	/**
+	 * When called launches all necessary LockSeekers and 
+	 * LockReleasers to support a transaction, identified
+	 * by id.
+	 * @param id the integer id of the transaction.
+	 * @param plan the required table locks.
+	 * @param requiredLocks the place where necessary locks are
+	 * placed once acquired.
+	 * @param unnecessaryLocks after locks are no longer needed
+	 * they are put in this List to be released by the releaser.
+	 */
 	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table,Integer> requiredLocks, 
 														BlockingQueue<Table> unnecessaryLocks){
 		dependencies = db.getDependencies(plan);

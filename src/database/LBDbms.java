@@ -10,6 +10,13 @@ import java.util.Arrays;
  */
 public class LBDbms extends Dbms {
 
+	/**
+	 * Constructs a new LBDbms (left branching Dbms)
+	 * @param size
+	 * @param weight
+	 * @param dummyRoot indicates whether regular tree
+	 * or tree with dummy internal nodes.
+	 */
 	public LBDbms(int size, String weight, boolean dummyRoot){
 		super(size,weight,false);
 		this.dummyInternal = dummyRoot;
