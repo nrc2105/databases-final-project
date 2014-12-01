@@ -99,6 +99,7 @@ public class LogReporter {
 				millisToHuman(getStdDevRuntime(getXactionSleepTimes())));
 		
 		System.out.printf("Utilization: %2.2f%%\n\n", getUtilization() * 100);
+		System.out.printf("Wasted time: %s\n", millisToHuman(Math.round(getWastedTime())));
 		
 	}
 	
@@ -196,6 +197,10 @@ public class LogReporter {
 		for (String s : logs) {
 			System.out.println(s);
 		}
+	}
+	
+	private double getWastedTime() {
+		return totalRunTime() * (1 - getUtilization());
 	}
 	
 	
