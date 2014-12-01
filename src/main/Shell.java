@@ -65,7 +65,16 @@ public class Shell {
 		
 			// Return results (log stuff)
 			System.out.println("RUNNING ANALYSIS");
-			LogReporter.analyze(manager.getFullResults());
+			
+			// Old analysis
+//			LogReporter.analyze(manager.getFullResults());
+			
+			// Build LogReporter
+			LogReporter reporter = new LogReporter(manager);
+			reporter.printSummary();
+			reporter.printAggregate();
+			reporter.printTableAcessFreq();
+//			reporter.dumpToFile(filename);
 		
 		}
 	}
