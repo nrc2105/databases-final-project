@@ -26,7 +26,7 @@ import transactionManagement.TransactionManager;
 public class LogReporter {
 	
 	private List<String> logs;				// List of all logs
-	private int xactionNum;					// Number of transactions in this batch
+	private int numXactions;					// Number of transactions in this batch
 	private List<List<String>> xactionLogs;	// List of logs for each transaction
 	
 	
@@ -97,6 +97,8 @@ public class LogReporter {
 				millisToHuman(getAvgRuntime(getXactionSleepTimes())));
 		System.out.printf("Standard deviation: %s\n\n", 
 				millisToHuman(getStdDevRuntime(getXactionSleepTimes())));
+		
+		System.out.printf("Utilization: %2.2f%%\n\n", getUtilization() * 100);
 		
 	}
 	
@@ -170,7 +172,7 @@ public class LogReporter {
 		this.logs = new ArrayList<String>(logSet);
 		Collections.sort(logs);
 		
-		this.xactionNum = getXactionNum();
+		this.numXactions = getXactionNum();
 		this.xactionLogs = getXactionLogs();
 	}
 	
@@ -183,7 +185,7 @@ public class LogReporter {
 		this.logs = new ArrayList<String>(manager.getFullResults());
 		Collections.sort(logs);
 		
-		this.xactionNum = getXactionNum();
+		this.numXactions = getXactionNum();
 		this.xactionLogs = getXactionLogs();
 	}
 	
@@ -196,6 +198,37 @@ public class LogReporter {
 		}
 	}
 	
+	
+	/**
+	 * Calculates percentage of total run time of the batch spent on activities other than
+	 * overhead. This time is spent either writing or waiting for locks.
+	 * 
+	 * @return utilization fraction
+	 */
+	private double getUtilization() {
+		return (double)getAvgRuntime(getUsefulTime()) / getAvgRuntime(getXactionRuntimes());
+	}
+	
+	/**
+	 * Gets the amount of time spent writing or waiting for locks by each transaction.
+	 * The rest of the time is assumed to be overhead.
+	 * 
+	 * @return useful time in milliseconds per transaction
+	 */
+	private List<String> getUsefulTime() {
+		List<String> sleepTimes = getXactionSleepTimes();
+		List<String> waitTimes = getXactionWaitingTimes();
+		List<String> usefulTimes = new ArrayList<String>();
+		for (int xNum = 0; xNum < numXactions; xNum++) {
+			long sleepTime = Long.parseLong(sleepTimes.get(xNum).split("\t")[1]);
+			String[] waitParsed = waitTimes.get(xNum).split("\t");
+			long waitTime = Long.parseLong(waitParsed[1]);
+			usefulTimes.add(waitParsed[0] + "\t" + (waitTime + sleepTime));
+		}
+		
+		return usefulTimes;
+	}
+	
 	/**
 	 * Used as part of the constructor to separate out the transaction log records
 	 * and divide them into a list for each transaction
@@ -204,7 +237,7 @@ public class LogReporter {
 	 */
 	private List<List<String>> getXactionLogs() {
 		xactionLogs = new ArrayList<List<String>>();
-		for (int xactionIndex = 0; xactionIndex < xactionNum; xactionIndex++) {
+		for (int xactionIndex = 0; xactionIndex < numXactions; xactionIndex++) {
 			ArrayList<String> xLog = new ArrayList<String>();
 			for (String logEntry : logs) {
 				if (logEntry.contains("XACTION," + String.format("%02d", xactionIndex))) {
@@ -215,7 +248,7 @@ public class LogReporter {
 			xactionLogs.add(xLog);
 		}
 		
-		assert xactionLogs.size() == xactionNum;
+		assert xactionLogs.size() == numXactions;
 		
 		return xactionLogs;
 	}
@@ -235,7 +268,7 @@ public class LogReporter {
 			runtimes.add(xLog.get(0).split("\t")[1] + "\t" + runtime);			
 		}
 		
-		assert runtimes.size() == xactionNum : 
+		assert runtimes.size() == numXactions : 
 			"ERROR: Number of runtimes doesn't match number of transactions.";
 		
 		return runtimes;
@@ -257,7 +290,7 @@ public class LogReporter {
 			sleepTimes.add(entrys[1] + "\t" + sleepTime);			
 		}
 		
-		assert sleepTimes.size() == xactionNum : 
+		assert sleepTimes.size() == numXactions : 
 			"ERROR: Number of sleep times doesn't match number of transactions.";
 		
 		return sleepTimes;
@@ -299,7 +332,7 @@ public class LogReporter {
 			waitTimes.add(xLog.get(0).split("\t")[1] + "\t" + waitTime);
 		}
 		
-		assert waitTimes.size() == xactionNum : 
+		assert waitTimes.size() == numXactions : 
 			"ERROR: Number of sleep times doesn't match number of transactions.";
 		
 		return waitTimes;
