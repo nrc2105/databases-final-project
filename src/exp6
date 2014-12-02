@@ -1,0 +1,27 @@
+#!/bin/bash
+
+trials=1
+heaps=2
+for size in $(seq 2 $heaps); do
+mkdir experiments/experiment6.$sizeh.eq.lr
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=dh heapsize=$size filename=experiments/experiment6.`size`h.eq.lr.trial$num
+done
+
+mkdir experiments/experiment6.`size`h.top.lr
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=dh heapsize=$size weight=top filename=experiments/experiment6.`size`h.eq.lr.trial$num
+done
+
+mkdir experiments/experiment6.`size`h.bottom.lr
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=dh heapsize=$size weight=bottom filename=experiments/experiment6.`size`h.eq.lr.trial$num
+done
+
+done

@@ -8,7 +8,9 @@ import database.DbmsFactory;
 
 public class Shell {
 	
-	public static final int MEAN_IO_TIME_MILLIS = 100;
+	public static int MEAN_IO_TIME_MILLIS = 100;
+	public static final String IOTIME="iotime";
+	public static final String DEFAULTIO = "100";
 	public static final String DBSIZE = "dbsize";
 	public static final String DEFAULTSIZE = "100";
 	public static final String STRUCT = "struct";
@@ -39,6 +41,7 @@ public class Shell {
 			
 			System.out.println("INITIALIZING PARAMETER MAP");
 			HashMap<String,String> params = getParameterMap(args);
+			MEAN_IO_TIME_MILLIS = Integer.parseInt(params.get(IOTIME));
 			String struct = params.get(STRUCT);
 			String weight = params.get(WEIGHT);
 			boolean dummyRoot = Boolean.parseBoolean(params.get(DUMMYROOT));
@@ -75,8 +78,8 @@ public class Shell {
 			LogReporter reporter = new LogReporter(manager);
 			reporter.printSummary();
 			reporter.printAggregate();
-			reporter.printTableAcessFreq();
-			if(!params.get(FILENAME).equals(DEFAULTFILE)){
+//			reporter.printTableAcessFreq();
+			if(!(params.get(FILENAME)).equals(DEFAULTFILE)){
 				reporter.dumpToFile(params.get(FILENAME));
 			}
 		
@@ -98,6 +101,7 @@ public class Shell {
 		params.put(HEAPSIZE, DEFAULTHSIZE);
 		params.put(CONCURRENT, DEFAULTCONCURRENT);
 		params.put(FILENAME, DEFAULTFILE);
+		params.put(IOTIME,DEFAULTIO);
 		for(String a : args){
 			String[] parsed = a.split("=");
 			if(parsed.length == 2){

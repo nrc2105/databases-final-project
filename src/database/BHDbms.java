@@ -27,8 +27,8 @@ public class BHDbms extends Dbms{
 	}
 
 	/**
-	 * Returns parent index of current index based on
-	 * the implementation of the Dbms.
+	 * Returns parent index of current index based
+	 * on the binary heap structure.
 	 *
 	 * @param the index of the child.
 	 * @return the index of the parent.
