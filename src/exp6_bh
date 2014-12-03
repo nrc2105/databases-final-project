@@ -1,0 +1,13 @@
+#!/bin/bash
+
+trials=1
+heaps=2
+for size in $(seq 2 $heaps); do
+mkdir experiments/experiment6.${size}h.${1}.$2
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=dh heapsize=$size weight=$1 dummyroot=$2 filename=experiments/experiment6.${size}h.${1}.${2}/experiment6.${size}h.${1}.${2}.trial$num
+done
+
+done

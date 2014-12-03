@@ -204,7 +204,12 @@ public abstract class Dbms{
 
 	@Override
 	public String toString(){
-		String out = "DBMS SIZE: " + size;
+		String out;
+		if(dummyRoot){
+			out = "DBMS SIZE: " + (size - 1);
+		}else{
+			out = "DBMS SIZE: " + size;
+		}
 		if(weight.equalsIgnoreCase(EQWEIGHT)){
 			out += " DIST: EQUAL WEIGHTS";
 		} else if(weight.equalsIgnoreCase(TOPWEIGHT)){

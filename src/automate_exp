@@ -1,0 +1,9 @@
+#!/bin/bash
+
+./exp6 mf equal false
+./exp6 mf equal true
+./exp6 mf top false
+./exp6 mf top true
+./exp6 mf bottom false
+./exp6 mf bottom true
+
