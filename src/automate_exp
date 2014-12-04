@@ -1,9 +1,16 @@
 #!/bin/bash
 
+./exp5 dh equal false
+./exp5 dh equal true
+./exp3 true
+./exp6 lb equal false
+./exp6 lb equal true
 ./exp6 mf equal false
 ./exp6 mf equal true
-./exp6 mf top false
-./exp6 mf top true
-./exp6 mf bottom false
-./exp6 mf bottom true
-
+./exp6_10h top false
+./exp6_10h top true
+./exp6_10h bottom false
+./exp6_10h bottom true
+./exp9 dh
+./exp9 mf
+./exp9 lb

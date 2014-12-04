@@ -1,0 +1,11 @@
+#!/bin/bash
+
+trials=100
+
+mkdir experiments/experiment6.10h.${1}.$2
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=dh heapsize=10 weight=$1 dummyroot=$2 filename=experiments/experiment6.10h.${1}.${2}/experiment6.$10h.${1}.${2}.trial$num
+done
+

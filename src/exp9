@@ -1,0 +1,10 @@
+#!/bin/bash
+
+trials=100
+mkdir experiments/experiment9.$1
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell struct=$1 concurrent=false filename=experiments/experiment9.${1}/experiment9.${1}.trial$num
+done
+

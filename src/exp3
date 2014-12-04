@@ -1,0 +1,10 @@
+#!/bin/bash
+
+trials=100
+mkdir experiments/experiment3.$1
+
+for num in $(seq 1 $trials); do
+    echo "running trial" $num;
+    java main/Shell xactionvariety=$1 filename=experiments/experiment3.${1}/experiment3.${1}.trial$num
+done
+

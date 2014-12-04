@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trials=1
+trials=100
 mkdir experiments/experiment6.${1}.${2}.$3
 
 for num in $(seq 1 $trials); do
