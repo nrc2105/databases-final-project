@@ -4,14 +4,13 @@ trials=100
 mkdir experiments/control
 
 for num in $(seq 1 $trials); do
-    echo "running control trial" $num;
-    java -jar databases.jar filename=experiments/control/control.trial$num
+	echo "running control trial" $num;
+	java -jar databases.jar filename=experiments/control/control.trial$num
 done
 
 mkdir experiments/experiment2
 
-for num in $(seq 1 $trials); do
-    echo "running experiment trial" $num;
-    java -jar databases.jar batchsize=10 xactionsize=100 filename=experiments/experiment2/experiment2.trial$num
+for numb in $(seq 1 $trials); do
+	echo "running experiment trial" $num;
+	java -jar databases.jar batchsize=10 xactionsize=100 filename=experiments/experiment2/experiment2.trial$num
 done
-
