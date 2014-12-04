@@ -46,7 +46,7 @@ public class Transaction implements Runnable{
 		this.id = id;
 		this.size = size;
 		this.database = database;
-		this.log = new ArrayList<String>();
+		this.log = new ArrayList<String>(4 + size * 4);
 		this.sleepTime = new Random();
 		
 		this.requiredLocks = new ArrayList<Table>(database.getTables(size));
