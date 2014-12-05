@@ -12,15 +12,32 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		String directoryPath = "experiments/l_experiments/benchmark";
-		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
-		System.out.printf("Average runtime is %s", 
-				LogReporter.millisToHuman(getAverageRuntime(list)));
-		
+		experiment2();
 		
 		
 		
 	}
+	
+	
+	
+	public static void experiment2 () {
+		
+		String directoryPath = "experiments/m_experiments/experiment2";
+		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+		list.get(0).printSummary();
+		System.out.printf("Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list)));
+		
+		
+		String directoryPath1 = "experiments/m_experiments/experiment2_control";
+		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
+		list1.get(0).printSummary();
+		System.out.printf("Control Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list1)));
+
+	}
+	
+	
 	
 	/**
 	 * Gets contents of a directory
@@ -61,6 +78,13 @@ public class Analysis {
 		return list;
 	}
 	
+	
+	/**
+	 * Gets average runtime for every LogReporter in the directory
+	 * 
+	 * @param list
+	 * @return
+	 */
 	public static long getAverageRuntime(List<LogReporter> list) {
 		long total = 0;
 		int logsRead = 0;
