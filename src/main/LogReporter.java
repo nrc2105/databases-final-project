@@ -444,7 +444,7 @@ public class LogReporter {
 	 * and returns the difference
 	 * @return runtime (in milliseconds) of transaction batch
 	 */
-	private long totalRunTime() {
+	long totalRunTime() {
 		String startTime = null;
 		String endTime = null;
 		for (String record : getManagerRecords()) {
@@ -574,7 +574,7 @@ public class LogReporter {
 	 * @param time
 	 * @return
 	 */
-	private static String millisToHuman(long time) {
+	static String millisToHuman(long time) {
 		long minutes = time / (1000 * 60);
 		long seconds = (time / 1000) % 60;
 		long millis = time % 1000;
