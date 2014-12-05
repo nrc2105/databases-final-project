@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./exp9 dh
+./exp9 mf
+./exp9 lb
