@@ -18,7 +18,22 @@ public class Analysis {
 		
 	}
 	
-	
+public static void experiment1 () {
+		
+		String directoryPath = "experiments/m_experiments/experiment1/experiment1short";
+		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+		list.get(0).printSummary();
+		System.out.printf("Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list)));
+		
+		
+		String directoryPath1 = "experiments/m_experiments/experiment1/experiment1long";
+		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
+		list1.get(0).printSummary();
+		System.out.printf("Control Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list1)));
+
+	}
 	
 	public static void experiment2 () {
 		
