@@ -287,7 +287,7 @@ public class LogReporter {
 	 * 
 	 * @return List of strings: Transaction: total sleep time
 	 */
-	private List<String> getXactionSleepTimes() {
+	List<String> getXactionSleepTimes() {
 		List<String> sleepTimes = new ArrayList<String>();
 		for (List<String> xLog : xactionLogs) {
 			String[] entrys = xLog.get(xLog.size() - 1).split("\t");
@@ -602,7 +602,7 @@ public class LogReporter {
 	 * @param List of runtimes in class-standard format
 	 * @return average runtime
 	 */
-	private static long getAvgRuntime(List<String> runTimeList) {
+	static long getAvgRuntime(List<String> runTimeList) {
 		long total = 0;
 		for (String entry : runTimeList) {
 			total += Long.parseLong(entry.split("\t")[1]);
