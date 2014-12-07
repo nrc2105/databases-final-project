@@ -8,7 +8,5 @@ public class TransactionFactory {
 		assert size > 0 : "ERROR: Factory reports transaction size is " + size;
 		return new Transaction(id, size, database);
 	}
-	
-	//TODO: Add more specific creations here later
 
 }

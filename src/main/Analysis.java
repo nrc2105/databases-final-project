@@ -14,7 +14,7 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		experiment6b();
+		experiment8();
 		
 		
 	}
@@ -197,6 +197,7 @@ public static void experiment1 () {
 				LogReporter.millisToHuman(getAverageRuntime(list1)));
 
 	}
+
 	
 	public static void experiment7 () {
 		System.out.println("Experiment 7 results");
@@ -239,6 +240,24 @@ public static void experiment1 () {
 			e.printStackTrace();
 		}
 
+
+	}
+	
+	public static void experiment8 () {
+		System.out.println("Experiment 8 results");
+
+		String directoryPath = "experiments/n_experiments/experiment6.lb.equal.dummyroot_false";
+		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+		list.get(0).printSummary();
+		System.out.printf("LB Dummy False Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list)));
+		
+		
+		String directoryPath1 = "experiments/n_experiments/experiment6.lb.equal.dummyroot_true";
+		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
+		list1.get(0).printSummary();
+		System.out.printf("LB Dummy True Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list1)));
 
 	}
 	
