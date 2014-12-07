@@ -1,12 +1,12 @@
 package database;
 
 import java.util.*;
-/**
+/*
  *	The Dbms is the control structure of the simulator.
  *	It holds the Tables, which are essentially lockable
- *	and unlockable objects with no other purpose, and starts the 
- *	Transactions, which will have generated queries and associated 
- *	lock requirements.  
+ *	and unlockable objects with no other purpose, and 
+ *	sub classes of Dbms will determine the structure
+ *	of dependencies between tables.  
  *
  *	Author: Nicholas Cummins
  *	email: ncummins@brandeis.edu

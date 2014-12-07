@@ -6,6 +6,14 @@ import transactionManagement.TransactionManager;
 import database.Dbms;
 import database.DbmsFactory;
 
+/*
+ * The Shell is the main interface class of the
+ * Dbms tree-protocol locking simulator.  For
+ * information on specific command-line arguments
+ * run with argument "help"
+ * 
+ * Author: Nicholas Cummins
+ */
 public class Shell {
 	
 	public static int MEAN_IO_TIME_MILLIS = 100;
@@ -115,16 +123,19 @@ public class Shell {
 	
 	public static void printHelp(){
 		System.out.println("Option format: <parameter>=<value>\n");
+		System.out.println("Example: dbsize=100\n");
 		System.out.println("Parameters:\tValues:\n");
 		System.out.println("dbsize\t\tAny positive integer, default is 100");
-		System.out.println("struct\t\tbh,mf for Binary Heap and Max Fanout");
+		System.out.println("struct\t\tdh,mf,lb for D-Heap, Max Fanout, and Left-Branching.");
 		System.out.println("weight\t\tequal,top,bottom");
-		System.out.println("heapsize\t\tDegree of heap, any positive integer.");
+		System.out.println("heapsize\tDegree of heap, any positive integer.");
 		System.out.println("dummyroot\ttrue,false for whether or not the root should be blank placeholder");
 		System.out.println("batchsize\tNumber of transactions to run.  Any positive integer, default is 100");
 		System.out.println("xactionsize\tNumber of writes per transaction.  Any positive integer, default is 10");
-		System.out.println("xactionvariety\ttrue,false [MIKE WHAT DOES THIS MEAN?]");
-		System.out.println("verbose\t\tNOTHING YET");
+		System.out.println("xactionvariety\ttrue,false, indicating whether or not to vary the size of transactions.");
+		System.out.println("iotime\t\tthe average time (in milliseconds) of each write");
+		System.out.println("concurrent\ttrue,false, indicating whether the transactions should be run concurrently or not.");
+		System.out.println("filename\tthe name of a file if you wish to save the log dump.");
 	}
 	
 	public static long getTime() {

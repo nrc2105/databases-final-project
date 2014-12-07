@@ -3,6 +3,8 @@ package database;
 
 /*
  * This factory returns instances of Dbms with desired properties.
+ * 
+ * Author: Nicholas Cummins
  *
  */
 

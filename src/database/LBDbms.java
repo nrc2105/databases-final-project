@@ -7,6 +7,8 @@ import java.util.Arrays;
  * the only feature of note is that dummyRoot will not only 
  * create a fake root, but all internals will be dummy nodes
  * as well.
+ * 
+ * Author: Nicholas Cummins
  */
 public class LBDbms extends Dbms {
 

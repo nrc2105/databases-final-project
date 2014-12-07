@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * The LockManager controls how table locks can be accessed
  * and starts all necessary lock seekers and releasers at 
  * the request of a transaction.
+ * 
+ * Author: Nicholas Cummins
  */
 
 public class LockManager{

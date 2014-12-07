@@ -4,6 +4,8 @@ package database;
  * MFDbms is a Maximum Fanout Dbms that has a single
  * root and only one level of children, ie all tables 
  * that are not the root are children of the root.
+ * 
+ * Author: Nicholas Cummins
  */
 
 public class MFDbms extends Dbms {
