@@ -14,7 +14,7 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		experiment2();
+		experiment5();
 		
 		
 	}
@@ -149,6 +149,19 @@ public static void experiment1 () {
 		list1.get(0).printSummary();
 		System.out.printf("Control Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list1)));
+		
+		String directoryPath2 = "experiments/n_experiments/experiment6.mf.equal.dummyroot_false";
+		List<LogReporter> list2 = getLogReporters(getDirectoryContents(directoryPath2));
+		list2.get(0).printSummary();
+		System.out.printf("Max Fanout Live Root Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list2)));
+		
+		
+		String directoryPath3 = "experiments/n_experiments/experiment6.mf.equal.dummyroot_true";
+		List<LogReporter> list3 = getLogReporters(getDirectoryContents(directoryPath3));
+		list3.get(0).printSummary();
+		System.out.printf("Man Fanout Dummy Root Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list3)));
 
 	}
 	
