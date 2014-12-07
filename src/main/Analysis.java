@@ -14,7 +14,7 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		experiment8();
+		experiment2();
 		
 		
 	}
