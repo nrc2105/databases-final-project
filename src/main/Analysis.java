@@ -14,13 +14,14 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		experiment7();
+		experiment4();
 		
 		
 	}
 	
 public static void experiment1 () {
-		
+	System.out.println("Experiment 1 results");
+
 		String directoryPath = "experiments/m_experiments/experiment1/experiment1long";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
@@ -40,7 +41,8 @@ public static void experiment1 () {
 	}
 	
 	public static void experiment2 () {
-		
+		System.out.println("Experiment 2 results");
+
 		String directoryPath = "experiments/m_experiments/experiment2";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
@@ -57,7 +59,8 @@ public static void experiment1 () {
 	}
 	
 	public static void experiment3 () {
-		
+		System.out.println("Experiment 3 results");
+
 		String directoryPath = "experiments/n_experiments/experiment3.xactionvariety_true";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
@@ -74,30 +77,66 @@ public static void experiment1 () {
 	}
 	
 	public static void experiment4 () {
-		
-		String directoryPath = "experiments/n_experiments/experiment6.mf.bottom.dummyroot_false";
+		System.out.println("Experiment 4 results");
+
+		String directoryPath = "experiments/l_experiments/benchmark";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
-		System.out.printf("Bottom weight Average runtime is %s\n", 
+		System.out.printf("Binary Heap Benchmark Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list)));
 		
-		
-		String directoryPath1 = "experiments/n_experiments/experiment6.mf.equal.dummyroot_false";
+		String directoryPath1 = "experiments/l_experiments/experiment6.dh.bottom";
 		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
 		list1.get(0).printSummary();
-		System.out.printf("Equal Weight Average runtime is %s\n", 
+		System.out.printf("Binary Heap Bottom Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list1)));
 		
-		String directoryPath2 = "experiments/n_experiments/experiment6.mf.top.dummyroot_false";
+		String directoryPath2 = "experiments/l_experiments/experiment6.dh.top";
 		List<LogReporter> list2 = getLogReporters(getDirectoryContents(directoryPath2));
 		list1.get(0).printSummary();
-		System.out.printf("Top Weight Average runtime is %s\n", 
+		System.out.printf("Binary Heap Top Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list2)));
 
+		String directoryPath3 = "experiments/l_experiments/experiment6.10h.equal";
+		List<LogReporter> list3 = getLogReporters(getDirectoryContents(directoryPath3));
+		list.get(0).printSummary();
+		System.out.printf("10 Heap Benchmark Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list3)));
+		
+		String directoryPath4 = "experiments/l_experiments/experiment6.10h.bottom";
+		List<LogReporter> list4 = getLogReporters(getDirectoryContents(directoryPath4));
+		list1.get(0).printSummary();
+		System.out.printf("Binary Heap Bottom Weight Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list4)));
+		
+		String directoryPath5 = "experiments/l_experiments/experiment6.10h.top.false";
+		List<LogReporter> list5 = getLogReporters(getDirectoryContents(directoryPath5));
+		list1.get(0).printSummary();
+		System.out.printf("Binary Heap Top Weight Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list5)));
+
+		String directoryPath6 = "experiments/l_experiments/experiment6.mf.equal";
+		List<LogReporter> list6 = getLogReporters(getDirectoryContents(directoryPath6));
+		list.get(0).printSummary();
+		System.out.printf("Max Fanout Benchmark Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list6)));
+		
+		String directoryPath7 = "experiments/l_experiments/experiment6.mf.bottom";
+		List<LogReporter> list7 = getLogReporters(getDirectoryContents(directoryPath7));
+		list1.get(0).printSummary();
+		System.out.printf("Max Fanout Bottom Weight Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list7)));
+		
+		String directoryPath8 = "experiments/l_experiments/experiment6.mf.top";
+		List<LogReporter> list8 = getLogReporters(getDirectoryContents(directoryPath8));
+		list1.get(0).printSummary();
+		System.out.printf("Max Fanout Top Weight Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list8)));
 	}
 	
 	public static void experiment5 () {
-		
+		System.out.println("Experiment 5 results");
+
 		String directoryPath = "experiments/n_experiments/experiment5.dh.equal.dummyroot_true";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
@@ -113,10 +152,50 @@ public static void experiment1 () {
 
 	}
 	
+	public static void experiment6 () {
+		System.out.println("Experiment 6 results");
+
+		String directoryPath = "experiments/l_experiments/experiment5.dh.equal.dummyroot_true";
+		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+		list.get(0).printSummary();
+		System.out.printf("Dummy Root Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list)));
+		
+		
+		String directoryPath1 = "experiments/l_experiments/benchmark";
+		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
+		list1.get(0).printSummary();
+		System.out.printf("Benchmark Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list1)));
+
+	}
+	
 	public static void experiment7 () {
 		System.out.println("Experiment 7 results");
 		
 		Path writePath = Paths.get("Results", "experiment7.csv");
+		try (BufferedWriter writer = Files.newBufferedWriter(writePath, Charset.defaultCharset())) {
+			for (int dbsize = 10; dbsize <= 1000; dbsize += 20) {
+				String directoryPath = "experiments/m_experiments/dbsize/" + dbsize;
+				List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+				list.get(0).printSummary();
+				long runtime = getAverageRuntime(list);
+				System.out.printf("Size " + dbsize + " Average runtime is %s\n", 
+						LogReporter.millisToHuman(runtime));
+				writer.write(String.format("%d,%d\n", dbsize, runtime));
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	
+	public static void experiment7a () {
+		System.out.println("Experiment 7a results");
+		
+		Path writePath = Paths.get("Results", "experiment7a.csv");
 		try (BufferedWriter writer = Files.newBufferedWriter(writePath, Charset.defaultCharset())) {
 			for (int dbsize = 20; dbsize <= 1000; dbsize += 20) {
 				String directoryPath = "experiments/m_experiments/dbsizevariety/" + dbsize;
@@ -136,7 +215,7 @@ public static void experiment1 () {
 	}
 	
 	public static void experiment9 () {
-		
+		System.out.println("Experiment 9 Results:");
 		String directoryPath = "experiments/n_experiments/experiment9.dh";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
@@ -190,8 +269,8 @@ public static void experiment1 () {
 		int logsRead = 0;
 		for (Path entry : dir) {
 			list.add(LogReporter.readFromFile(entry));
-			if (logsRead++ % 25 == 0) {
-				System.out.println("Read " + logsRead + " logs");
+			if (logsRead % 25 == 0) {
+//				System.out.println("Read " + logsRead++ + " logs");
 			}
 		}
 		
@@ -211,8 +290,8 @@ public static void experiment1 () {
 		for (LogReporter lr : list) {
 			
 			total+=lr.totalRunTime();
-			if (logsRead++ % 25 == 0) {
-				System.out.println("Processed " + logsRead + " logs");
+			if (!(logsRead == 0) && ++logsRead % 25 == 0) {
+//				System.out.println("Processed " + logsRead + " logs");
 			}
 		}
 		return total / list.size();
@@ -231,8 +310,8 @@ public static void experiment1 () {
 		for (LogReporter lr : list) {
 			
 			total+=LogReporter.getAvgRuntime(lr.getXactionSleepTimes());
-			if (logsRead++ % 25 == 0) {
-				System.out.println("Processed " + logsRead + " logs");
+			if (!(logsRead == 0) && ++logsRead % 25 == 0) {
+//				System.out.println("Processed " + logsRead + " logs");
 			}
 		}
 		return total / list.size();
