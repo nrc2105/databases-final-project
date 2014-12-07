@@ -93,43 +93,43 @@ public static void experiment1 () {
 		
 		String directoryPath2 = "experiments/l_experiments/experiment6.dh.top";
 		List<LogReporter> list2 = getLogReporters(getDirectoryContents(directoryPath2));
-		list1.get(0).printSummary();
+		list2.get(0).printSummary();
 		System.out.printf("Binary Heap Top Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list2)));
 
 		String directoryPath3 = "experiments/l_experiments/experiment6.10h.equal";
 		List<LogReporter> list3 = getLogReporters(getDirectoryContents(directoryPath3));
-		list.get(0).printSummary();
+		list3.get(0).printSummary();
 		System.out.printf("10 Heap Benchmark Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list3)));
 		
 		String directoryPath4 = "experiments/l_experiments/experiment6.10h.bottom";
 		List<LogReporter> list4 = getLogReporters(getDirectoryContents(directoryPath4));
-		list1.get(0).printSummary();
+		list4.get(0).printSummary();
 		System.out.printf("Binary Heap Bottom Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list4)));
 		
 		String directoryPath5 = "experiments/l_experiments/experiment6.10h.top.false";
 		List<LogReporter> list5 = getLogReporters(getDirectoryContents(directoryPath5));
-		list1.get(0).printSummary();
+		list5.get(0).printSummary();
 		System.out.printf("Binary Heap Top Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list5)));
 
 		String directoryPath6 = "experiments/l_experiments/experiment6.mf.equal";
 		List<LogReporter> list6 = getLogReporters(getDirectoryContents(directoryPath6));
-		list.get(0).printSummary();
+		list6.get(0).printSummary();
 		System.out.printf("Max Fanout Benchmark Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list6)));
 		
 		String directoryPath7 = "experiments/l_experiments/experiment6.mf.bottom";
 		List<LogReporter> list7 = getLogReporters(getDirectoryContents(directoryPath7));
-		list1.get(0).printSummary();
+		list7.get(0).printSummary();
 		System.out.printf("Max Fanout Bottom Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list7)));
 		
 		String directoryPath8 = "experiments/l_experiments/experiment6.mf.top";
 		List<LogReporter> list8 = getLogReporters(getDirectoryContents(directoryPath8));
-		list1.get(0).printSummary();
+		list8.get(0).printSummary();
 		System.out.printf("Max Fanout Top Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list8)));
 	}
@@ -231,7 +231,7 @@ public static void experiment1 () {
 		
 		String directoryPath2 = "experiments/n_experiments/experiment9.mf";
 		List<LogReporter> list2 = getLogReporters(getDirectoryContents(directoryPath2));
-		list1.get(0).printSummary();
+		list2.get(0).printSummary();
 		System.out.printf("MF Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list2)));
 
