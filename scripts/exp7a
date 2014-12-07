@@ -1,0 +1,19 @@
+#!/bin/bash
+
+trials=10
+mkdir experiments/dbsizevariety
+size=20
+
+while [ $size -lt 1001 ]; do
+
+
+	mkdir experiments/dbsizevariety/$size
+
+	for num in $(seq 1 $trials); do
+		echo "running size " $size " trial " $num;
+		java -jar databases.jar xactionvariety=true dbsize=$size filename=experiments/dbsizeveriety/$size/dbsize.trial$num
+	done
+
+	((size+=20));
+
+done
