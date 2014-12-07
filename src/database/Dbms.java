@@ -3,10 +3,11 @@ package database;
 import java.util.*;
 /*
  *	The Dbms is the control structure of the simulator.
- *	It holds the Tables, which are essentially lockable
- *	and unlockable objects with no other purpose, and 
+ *	It holds the Entities, which are lockable
+ *	and unlockable objects that can represent any lockable
+ *  portion of a database, and 
  *	sub classes of Dbms will determine the structure
- *	of dependencies between tables.  
+ *	of dependencies between entities.  
  *
  *	Author: Nicholas Cummins
  *	email: ncummins@brandeis.edu
@@ -17,7 +18,7 @@ public abstract class Dbms{
 
 	/**
 	 * Constructs a new DBMS with a specified
-	 * number of tables.
+	 * number of entities.
 	 *
 	 * @param the integer size of the table.
 	 */
@@ -33,7 +34,7 @@ public abstract class Dbms{
 	
 	/**
 	 * Constructs a new DBMS with a specified
-	 * number of tables and a boolean indicating
+	 * number of entities and a boolean indicating
 	 * whether the root is a table or a dummy.
 	 * 
 	 * @param the integer size.
@@ -52,7 +53,7 @@ public abstract class Dbms{
 	}
 	
 	/**
-	 * Initializes tables and dependencies.
+	 * Initializes entities and dependencies.
 	 */
 	protected void initialize(){
 		this.constructTables();
@@ -60,27 +61,27 @@ public abstract class Dbms{
 	}
 
 	/**
-	 *	Creates enough tables to fill the list
+	 *	Creates enough entities to fill the list
 	 *	to the appropriate size of the Dbms.
 	 */
 
 	private void constructTables(){
-		tables =  new Table[size];
+		entities =  new Entity[size];
 
 		for(int i = 0; i < size; i++){
-			tables[i] = new Table(i);
+			entities[i] = new Entity(i);
 		}
 	}
 
 	/**
-	 *	Constructs partial ordering of the tables.
+	 *	Constructs partial ordering of the entities.
 	 *
 	 */
 
 	private void constructDependencies(){
-		paths = new HashMap<Table, List<Table>>();
+		paths = new HashMap<Entity, List<Entity>>();
 		for(int i = 0; i < size; i++){
-			paths.put(tables[i], getPath(i));
+			paths.put(entities[i], getPath(i));
 		}
 	}
 
@@ -89,12 +90,12 @@ public abstract class Dbms{
 	 *
 	 * @param the starting integer
 	 */
-	private List<Table> getPath(int start){
+	private List<Entity> getPath(int start){
 		int currentIndex = start;
-		Table currentTable;
-		ArrayList<Table> path = new ArrayList<Table>();
+		Entity currentTable;
+		ArrayList<Entity> path = new ArrayList<Entity>();
 		while(currentIndex >= 0){
-			currentTable = tables[currentIndex];
+			currentTable = entities[currentIndex];
 			path.add(0,currentTable);
 			currentIndex = getParentIndex(currentIndex);
 		}
@@ -105,26 +106,26 @@ public abstract class Dbms{
 
 
 	/**
-	 * 	Gets the list of tables in the Dbms.
+	 * 	Gets the list of entities in the Dbms.
 	 *
-	 *	@return the List of Tables.
+	 *	@return an Array of all Entities.
 	 *
 	 */
 
-	public Table[] getTables(){
+	public Entity[] getEntities(){
 		if(dummyRoot){
-			return Arrays.copyOfRange(tables, 1, size);
+			return Arrays.copyOfRange(entities, 1, size);
 		}else{
-			return tables;
+			return entities;
 		}
 	}
 
 	/**
-	 * Returns a subset of the tables
-	 * @param count the requested number of tables
-	 * @return the subset of tables
+	 * Returns a subset of the entities
+	 * @param count the requested number of entities
+	 * @return the subset of entities
 	 */
-	public List<Table> getTables(int count){
+	public List<Entity> getEntities(int count){
 		if(count > size){
 			throw new RuntimeException();
 		}
@@ -132,9 +133,9 @@ public abstract class Dbms{
 		while(tableSet.size() < count){
 			tableSet.add(getNextRandom());
 		}
-		ArrayList<Table> tableSubset = new ArrayList<Table>();
+		ArrayList<Entity> tableSubset = new ArrayList<Entity>();
 		for (Integer i : tableSet){
-			tableSubset.add(this.tables[i]);
+			tableSubset.add(this.entities[i]);
 		}
 		return tableSubset;
 	}
@@ -176,12 +177,12 @@ public abstract class Dbms{
 	 *	Returns the locks necessary to get to a
 	 * given table.
 	 *
-	 *	@param the Table sought.
+	 *	@param the Entity sought.
 	 *	@return the List (in order) of Tables needed.
 	 *
 	 */
 
-	public List<Table> getDependencies(Table goal){
+	public List<Entity> getDependencies(Entity goal){
 		return paths.get(goal);
 	}
 
@@ -190,14 +191,14 @@ public abstract class Dbms{
 	 * 	a given Plan.
 	 *
 	 *	@param the Plan requiring locks
-	 *	@param the List<List<Table>> of dependencies
+	 *	@param the List<List<Entity>> of dependencies
 	 *
 	 */
 
-	public List<List<Table>> getDependencies(List<Table> plan){
-		List<List<Table>> dependencies = new ArrayList<List<Table>>();
-		for (Table table : plan){
-			dependencies.add(this.getDependencies(table));
+	public List<List<Entity>> getDependencies(List<Entity> plan){
+		List<List<Entity>> dependencies = new ArrayList<List<Entity>>();
+		for (Entity entity : plan){
+			dependencies.add(this.getDependencies(entity));
 		}
 		return dependencies;
 	}
@@ -244,8 +245,8 @@ public abstract class Dbms{
 	public static final String TOPWEIGHT = "top";
 	public static final String BOTTOMWEIGHT = "bottom";
 	
-	private Table[] tables;
-	private HashMap<Table, List<Table>> paths;
+	private Entity[] entities;
+	private HashMap<Entity, List<Entity>> paths;
 	private boolean dummyRoot;
 	String weight;
 	int size;

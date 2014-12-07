@@ -1,7 +1,7 @@
 package lockManagement;
 
 import database.Dbms;
-import database.Table;
+import database.Entity;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -39,13 +39,13 @@ public class LockManager{
 	 * @param unnecessaryLocks after locks are no longer needed
 	 * they are put in this List to be released by the releaser.
 	 */
-	public void getAccess(int id, List<Table> plan, ConcurrentHashMap<Table,Integer> requiredLocks, 
-														BlockingQueue<Table> unnecessaryLocks){
+	public void getAccess(int id, List<Entity> plan, ConcurrentHashMap<Entity,Integer> requiredLocks, 
+														BlockingQueue<Entity> unnecessaryLocks){
 		dependencies = db.getDependencies(plan);
 		releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		new Thread(releaser).start();
-		for(List<Table> list : dependencies){
-			(new Thread(new LockSeeker(id, new ArrayList<Table>(list),
+		for(List<Entity> list : dependencies){
+			(new Thread(new LockSeeker(id, new ArrayList<Entity>(list),
 						unnecessaryLocks, requiredLocks))).start();
 
 		}
@@ -54,6 +54,6 @@ public class LockManager{
 
 	private Dbms db;
 	private LockReleaser releaser;
-	private List<List<Table>> dependencies;
+	private List<List<Entity>> dependencies;
 	
 }

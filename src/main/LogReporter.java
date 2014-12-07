@@ -93,7 +93,7 @@ public class LogReporter {
 		System.out.printf("Standard deviation: %s\n\n", 
 				millisToHuman(getStdDevRuntime(getXactionWaitingTimes())));
 		
-		System.out.printf("Mean time spent writing to tables (per xaction): %s\n", 
+		System.out.printf("Mean time spent writing to entities (per xaction): %s\n", 
 				millisToHuman(getAvgRuntime(getXactionSleepTimes())));
 		System.out.printf("Standard deviation: %s\n\n", 
 				millisToHuman(getStdDevRuntime(getXactionSleepTimes())));
@@ -134,10 +134,10 @@ public class LogReporter {
 	}
 	
 	/**
-	 * Prints number of accesses to each Table
+	 * Prints number of accesses to each Entity
 	 */
 	public void printTableAcessFreq() {
-		System.out.println("Table access frequencies: ");
+		System.out.println("Entity access frequencies: ");
 		for (String s : mapToValueSortedList(getTableFreqMap())) {
 			System.out.println(s);
 		}
@@ -319,15 +319,15 @@ public class LogReporter {
 			String stopWaiting = null;
 			while (it.hasNext()) {
 				String entry = it.next();
-				if (entry.contains("requesting table")) {
+				if (entry.contains("requesting entity")) {
 					startWaiting = entry;
-				} else if (entry.contains("done waiting for table")) {
+				} else if (entry.contains("done waiting for entity")) {
 					stopWaiting = entry;
 				}
 				
 				if (startWaiting != null &&
 						stopWaiting != null &&
-						getTableName(startWaiting).equals(getTableName(stopWaiting))) {
+						getEntityName(startWaiting).equals(getEntityName(stopWaiting))) {
 					waitTime += getRuntime(startWaiting, stopWaiting);
 					startWaiting = null;
 					stopWaiting = null;
@@ -459,20 +459,20 @@ public class LogReporter {
 	}
 	
 	/**
-	 * Gets a map of table access frequencies from master log data
+	 * Gets a map of entity access frequencies from master log data
 	 * 
-	 * @return Map of Table name (string) to table access frequency
+	 * @return Map of Entity name (string) to table access frequency
 	 */
 	private Map<String, Integer> getTableFreqMap() {
 		Map<String, Integer> tableFreq = new HashMap<String, Integer>();
 		
 		for (String logEntry : logs) {
-			if (logEntry.contains("writing to table")) {
-				String table = getTableName(logEntry);
-				if (tableFreq.containsKey(table)) {
-					tableFreq.put(table, tableFreq.get(table) + 1);
+			if (logEntry.contains("writing to entity")) {
+				String entity = getEntityName(logEntry);
+				if (tableFreq.containsKey(entity)) {
+					tableFreq.put(entity, tableFreq.get(entity) + 1);
 				} else {
-					tableFreq.put(table, 1);
+					tableFreq.put(entity, 1);
 				}
 			}
 		}
@@ -481,7 +481,7 @@ public class LogReporter {
 	}
 	
 	/**
-	 * Utility to turn a map of Strings and Integers (as in the Table Frequency Map)
+	 * Utility to turn a map of Strings and Integers (as in the Entity Frequency Map)
 	 * and turn it into a list of Strings, each containing the table name followed by
 	 * access frequency, sorted by table access frequencies.
 	 * 
@@ -515,7 +515,7 @@ public class LogReporter {
 	}
 
 	/**
-	 * Utility to turn a map of Strings and Integers (as in the Table Frequency Map)
+	 * Utility to turn a map of Strings and Integers (as in the Entity Frequency Map)
 	 * and turn it into a list of Strings, each containing the table name followed by
 	 * access frequency, sorted by table names.
 	 * 
@@ -534,16 +534,16 @@ public class LogReporter {
 	}
 	
 	/**
-	 * Takes a logEntry concerning a Table in the database and extracts the name of that table
+	 * Takes a logEntry concerning a Entity in the database and extracts the name of that table
 	 * 
 	 * @param logEntry Any log entry concerning a table
-	 * @return Table name
+	 * @return Entity name
 	 */
-	private static String getTableName(String logEntry) {		
-		String tableNum = logEntry.split("TABLE")[1];
+	private static String getEntityName(String logEntry) {		
+		String tableNum = logEntry.split("ENTITY")[1];
 		
 		
-		return "TABLE" + tableNum;
+		return "ENTITY" + tableNum;
 	}
 	
 	/**

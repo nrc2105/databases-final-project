@@ -11,7 +11,7 @@ import lockManagement.LockSeeker;
 
 import org.junit.Test;
 
-import database.Table;
+import database.Entity;
 import static org.junit.Assert.*;
 
 
@@ -19,15 +19,15 @@ public class TestLocks {
 	@Test
 	public void testSeeker() throws InterruptedException{
 		int id = 1;
-		Table table1 = new Table(1);
-		Table table2 = new Table(2);
-		Table table3 = new Table(3);
-		ArrayList<Table> lockpath = new ArrayList<Table>();
+		Entity table1 = new Entity(1);
+		Entity table2 = new Entity(2);
+		Entity table3 = new Entity(3);
+		ArrayList<Entity> lockpath = new ArrayList<Entity>();
 		lockpath.add(table1);
 		lockpath.add(table2);
 		lockpath.add(table3);
-		BlockingQueue<Table> unnecessaryLocks = new ArrayBlockingQueue<Table>(3);
-		ConcurrentHashMap<Table,Integer> requiredLocks = new ConcurrentHashMap<Table,Integer>();
+		BlockingQueue<Entity> unnecessaryLocks = new ArrayBlockingQueue<Entity>(3);
+		ConcurrentHashMap<Entity,Integer> requiredLocks = new ConcurrentHashMap<Entity,Integer>();
 		LockSeeker seeker = new LockSeeker(id, lockpath, unnecessaryLocks, requiredLocks);
 		assertNotNull(seeker);
 		Thread seekerThread = new Thread(seeker);
@@ -42,23 +42,23 @@ public class TestLocks {
 	@Test
 	public void testReleaser() throws InterruptedException{
 		int id = 1;
-		Table table1 = new Table(1);
-		Table table2 = new Table(2);
-		Table table3 = new Table(3);
-		ArrayList<Table> dependency1 = new ArrayList<Table>();
+		Entity table1 = new Entity(1);
+		Entity table2 = new Entity(2);
+		Entity table3 = new Entity(3);
+		ArrayList<Entity> dependency1 = new ArrayList<Entity>();
 		dependency1.add(table1);
-		ArrayList<Table> dependency2 = new ArrayList<Table>();
+		ArrayList<Entity> dependency2 = new ArrayList<Entity>();
 		dependency2.add(table1);
 		dependency2.add(table2);
-		ArrayList<Table> dependency3 = new ArrayList<Table>();
+		ArrayList<Entity> dependency3 = new ArrayList<Entity>();
 		dependency3.add(table1);
 		dependency3.add(table2);
 		dependency3.add(table3);
-		ArrayList<List<Table>> dependencies = new ArrayList<List<Table>>();
+		ArrayList<List<Entity>> dependencies = new ArrayList<List<Entity>>();
 		dependencies.add(dependency1);
 		dependencies.add(dependency2);
 		dependencies.add(dependency3);
-		BlockingQueue<Table> unnecessaryLocks = new ArrayBlockingQueue<Table>(1);
+		BlockingQueue<Entity> unnecessaryLocks = new ArrayBlockingQueue<Entity>(1);
 		LockReleaser releaser = new LockReleaser(id, dependencies, unnecessaryLocks);
 		assertNotNull(releaser);
 		Thread releaserThread = new Thread(releaser);

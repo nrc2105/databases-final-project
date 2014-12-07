@@ -1,6 +1,6 @@
 package lockManagement;
 
-import database.Table;
+import database.Entity;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -20,13 +20,13 @@ public class LockReleaser implements Runnable{
 	 *	Creates a new LockReleaser
 	 *
 	 *	@param the int id of the parent transaction
-	 *	@param the List<List<Table>> of dependencies
+	 *	@param the List<List<Entity>> of dependencies
 	 *	@param the BlockingQueue used to communicate
 	 *
 	 */
 
-	public LockReleaser(int id, List<List<Table>> dependencies, 
-									BlockingQueue<Table> unnecessaryLocks){
+	public LockReleaser(int id, List<List<Entity>> dependencies, 
+									BlockingQueue<Entity> unnecessaryLocks){
 		this.id = id;
 		this.dependencies = dependencies;
 		this.unnecessaryLocks = unnecessaryLocks;
@@ -41,15 +41,15 @@ public class LockReleaser implements Runnable{
 	 */
 
 	private void initMap(){
-		dependencyMap = new HashMap<Table,Integer>();
+		dependencyMap = new HashMap<Entity,Integer>();
 		Integer value;
-		for(List<Table> list : dependencies){
-			for(Table table : list){
-				value = dependencyMap.get(table);
+		for(List<Entity> list : dependencies){
+			for(Entity entity : list){
+				value = dependencyMap.get(entity);
 				if(value == null){
-					dependencyMap.put(table, 1);
+					dependencyMap.put(entity, 1);
 				} else {
-					dependencyMap.put(table, value + 1);
+					dependencyMap.put(entity, value + 1);
 				}
 			}
 		}
@@ -67,7 +67,7 @@ public class LockReleaser implements Runnable{
 	public final void run(){
 		while(true){
 			try{
-				Table lock = unnecessaryLocks.take();
+				Entity lock = unnecessaryLocks.take();
 			
 				Integer value = dependencyMap.get(lock);
 				if(value == null){
@@ -89,7 +89,7 @@ public class LockReleaser implements Runnable{
 
 
 	private int id;
-	private BlockingQueue<Table> unnecessaryLocks;
-	private HashMap<Table, Integer> dependencyMap;
-	private List<List<Table>> dependencies;
+	private BlockingQueue<Entity> unnecessaryLocks;
+	private HashMap<Entity, Integer> dependencyMap;
+	private List<List<Entity>> dependencies;
 }

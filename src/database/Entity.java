@@ -1,32 +1,32 @@
 package database;
 /*
- *	Tables are the simulated version of real Dbms
- *	tables, serving no real purpose beyond managing
- *	their associated lock access.
+ *	Entities are the simulated version of lockable 
+ *	structures in a real Dbms serving no real 
+ *	purpose beyond managing their associated lock access.
  *
  *	Author: Nicholas Cummins
  *	email: ncummins@brandeis.edu
  *	10/25/14
  */
 
-public class Table{
+public class Entity{
 
 	/**
-	 * Create a table with no
+	 * Create an Entity with no
 	 * current owner
 	 *
 	 */
 
-	public Table(){
+	public Entity(){
 		currentOwner = -1;
 	}
 	
 	/**
-	 * Create a table with an int name.
+	 * Create an Entity with an int name.
 	 * @param name an integer identifier.
 	 */
 	
-	public Table(int name){
+	public Entity(int name){
 		currentOwner = -1;
 		this.name = name;
 	}
@@ -69,7 +69,7 @@ public class Table{
 	
 	@Override
 	public String toString(){
-		return "TABLE " + name;
+		return "ENTITY " + name;
 	}
 
 	private int name;

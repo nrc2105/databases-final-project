@@ -14,6 +14,16 @@ package database;
 	public static final String DH = "dh";
 	public static final String LB = "lb";
 	
+	/**
+	 * Returns an instance of Dbms of the appropriate type
+	 * as determined by the parameters.
+	 * @param struct, a String representing the desired structure.
+	 * @param weight, top, bottom, or equal weighting of table use.
+	 * @param dummyRoot, boolean to be passed on to Dbms
+	 * @param size, the size of the Dbms
+	 * @param heapSize, if struct dh this determines order of heap
+	 * @return the desired Dbms object
+	 */
 	public static Dbms getDbms(String struct, String weight, 
 						boolean dummyRoot, int size, int heapSize){
 		if(struct.equalsIgnoreCase(BH)){

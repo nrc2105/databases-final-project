@@ -35,11 +35,11 @@ public class LBDbms extends Dbms {
 	}
 	
 	@Override
-	public Table[] getTables(){
+	public Entity[] getEntities(){
 		if(dummyInternal){
-			return Arrays.copyOfRange(super.getTables(), length, size);
+			return Arrays.copyOfRange(super.getEntities(), length, size);
 		}else{
-			return super.getTables();
+			return super.getEntities();
 		}
 	}
 	

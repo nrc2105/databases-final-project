@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import database.Table;
+import database.Entity;
 
 /*
  * LockSeekers simply take a list of locked tables
@@ -24,8 +24,8 @@ public class LockSeeker implements Runnable{
 	 *
 	 */
 
-	public LockSeeker(int id, List<Table> locks, BlockingQueue<Table> obsoleteLocks,
-											ConcurrentHashMap<Table,Integer> requiredLocks){
+	public LockSeeker(int id, List<Entity> locks, BlockingQueue<Entity> obsoleteLocks,
+											ConcurrentHashMap<Entity,Integer> requiredLocks){
 		this.id = id;
 		this.locks = locks;
 		this.obsoleteLocks = obsoleteLocks;
@@ -40,7 +40,7 @@ public class LockSeeker implements Runnable{
 	 * and the final lock to requiredLocks
 	 */
 	public final void run(){
-		for(Table lock : locks){
+		for(Entity lock : locks){
 			while (!lock.acquireLock(id)){
 				//Livespin
 			}
@@ -57,8 +57,8 @@ public class LockSeeker implements Runnable{
 	}
 
 	private int id;
-	private List<Table> locks;
-	private BlockingQueue<Table> obsoleteLocks;
-	private ConcurrentHashMap<Table,Integer> requiredLocks;
-	private Table lastLock;
+	private List<Entity> locks;
+	private BlockingQueue<Entity> obsoleteLocks;
+	private ConcurrentHashMap<Entity,Integer> requiredLocks;
+	private Entity lastLock;
 }

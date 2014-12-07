@@ -153,7 +153,7 @@ public class TransactionManager {
 	
 	/**
 	 * Queries all (completed) transactions, collects their logs (unsorted) and
-	 * reports log data. This method is itempotent in that the masterLog of the manager
+	 * reports log data. This method is idempotent in that the masterLog of the manager
 	 * is not affected by this operation and so the returned results will not be adversely
 	 * affected by repeated calls to this method.
 	 * 

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lockManagement.LockManager;
 import main.Shell;
 import database.Dbms;
-import database.Table;
+import database.Entity;
 
 
 public class Transaction implements Runnable{
@@ -27,9 +27,9 @@ public class Transaction implements Runnable{
 	private int id;								// Transaction ID number
 	private int size;							// Number of operations
 	private Dbms database;						// Reference to master DB
-	private List<Table> requiredLocks;			// List of locks required by this transaction
-	private ConcurrentHashMap<Table, Integer> availableLocks; // Set of locks available for writing
-	private BlockingQueue<Table> finishedLocks;	// Locks are placed in here after writing
+	private List<Entity> requiredLocks;			// List of locks required by this transaction
+	private ConcurrentHashMap<Entity, Integer> availableLocks; // Set of locks available for writing
+	private BlockingQueue<Entity> finishedLocks;	// Locks are placed in here after writing
 	private List<String> log;					// Log of this transaction's events
 	private Random sleepTime;					// Used to randomize sleep timers for sim writes
 	private long sleepCounter;					// Running total of time spent sleeping
@@ -49,7 +49,7 @@ public class Transaction implements Runnable{
 		this.log = new ArrayList<String>(4 + size * 4);
 		this.sleepTime = new Random();
 		
-		this.requiredLocks = new ArrayList<Table>(database.getTables(size));
+		this.requiredLocks = new ArrayList<Entity>(database.getEntities(size));
 		
 		assert size > 0 : "ERROR: transaction size is " + size;
 
@@ -58,8 +58,8 @@ public class Transaction implements Runnable{
 		assert database.getPathLength() >= 1 : "ERROR: database.getPathLength "
 				+ "returned a value less than zero: " + database.getPathLength();
 		
-		finishedLocks = new ArrayBlockingQueue<Table>(finishedSize);
-		availableLocks = new ConcurrentHashMap<Table, Integer>();
+		finishedLocks = new ArrayBlockingQueue<Entity>(finishedSize);
+		availableLocks = new ConcurrentHashMap<Entity, Integer>();
 	}
 	
 
@@ -75,41 +75,41 @@ public class Transaction implements Runnable{
 		
 		logEvent("sent all lock requests");
 		
-		for (Table table : requiredLocks) {
+		for (Entity entity : requiredLocks) {
 			boolean hadToWait = false;
 			
 			// Begin waiting
-			logEvent(String.format("requesting table %s", table.toString()));
+			logEvent(String.format("requesting entity %s", entity.toString()));
 			
 			// Wait for each table in sequence
-			while (!availableLocks.containsKey(table)) {
+			while (!availableLocks.containsKey(entity)) {
 				// Live spin
 				hadToWait = true;
 			}
 			
-			// Table obtained
+			// Entity obtained
 			if (hadToWait) {
-				logEvent(String.format("done waiting for table %s", table.toString()));
+				logEvent(String.format("done waiting for entity %s", entity.toString()));
 			} else {
-				logEvent(String.format("did not wait for table %s", table.toString()));
+				logEvent(String.format("did not wait for entity %s", entity.toString()));
 			}
-			logEvent(String.format("writing to table %s", table.toString()));
+			logEvent(String.format("writing to entity %s", entity.toString()));
 			
 			// Simulate write operation
 			simulateWrite();
 			
-			logEvent(String.format("done with table %s", table.toString()));
+			logEvent(String.format("done with entity %s", entity.toString()));
 			
 			// Debug check against race conditions
-			assert availableLocks.containsKey(table) : "RACE CONDITION ERROR: "
-					+ "Table was unlocked while writing to it.";
+			assert availableLocks.containsKey(entity) : "RACE CONDITION ERROR: "
+					+ "Entity was unlocked while writing to it.";
 			
 			/* Mark lock for releasing
 			 * Note that this method will throw an exception if the Queue is full
 			 * It is unacceptable for the Queue to be full, so this is the preferred
 			 * behavior to threads blocking and corrupting run time data
 			 * */
-			finishedLocks.add(table);
+			finishedLocks.add(entity);
 			
 		}
 		
