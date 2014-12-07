@@ -14,7 +14,7 @@ public class Analysis {
 
 	public static void main(String[] args) {
 
-		experiment4();
+		experiment6b();
 		
 		
 	}
@@ -106,13 +106,13 @@ public static void experiment1 () {
 		String directoryPath4 = "experiments/l_experiments/experiment6.10h.bottom";
 		List<LogReporter> list4 = getLogReporters(getDirectoryContents(directoryPath4));
 		list4.get(0).printSummary();
-		System.out.printf("Binary Heap Bottom Weight Average runtime is %s\n", 
+		System.out.printf("10 Heap Bottom Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list4)));
 		
-		String directoryPath5 = "experiments/l_experiments/experiment6.10h.top.false";
+		String directoryPath5 = "experiments/l_experiments/experiment6.10h.top";
 		List<LogReporter> list5 = getLogReporters(getDirectoryContents(directoryPath5));
 		list5.get(0).printSummary();
-		System.out.printf("Binary Heap Top Weight Average runtime is %s\n", 
+		System.out.printf("10 Heap Top Weight Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list5)));
 
 		String directoryPath6 = "experiments/l_experiments/experiment6.mf.equal";
@@ -152,20 +152,48 @@ public static void experiment1 () {
 
 	}
 	
-	public static void experiment6 () {
-		System.out.println("Experiment 6 results");
+	public static void experiment6a () {
+		System.out.println("Experiment 6a results");
+		System.out.println("These are the L experiment results");
 
-		String directoryPath = "experiments/l_experiments/experiment5.dh.equal.dummyroot_true";
+		String directoryPath = "experiments/l_experiments/benchmark";
 		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
 		list.get(0).printSummary();
-		System.out.printf("Dummy Root Average runtime is %s\n", 
+		System.out.printf("Benchmark Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list)));
+		
+		for (int heap = 3; heap <= 10; heap++) {
+			String directoryPath1 = "experiments/l_experiments/experiment6." + heap + "h.equal";
+			List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
+			list1.get(0).printSummary();
+			System.out.printf(heap + "-Heap Equal Average runtime is %s\n", 
+					LogReporter.millisToHuman(getAverageRuntime(list1)));
+		}
+
+		
+		String directoryPath2 = "experiments/l_experiments/experiment6.mf.equal";
+		List<LogReporter> list2 = getLogReporters(getDirectoryContents(directoryPath2));
+		list2.get(0).printSummary();
+		System.out.printf("Max Fanout Average runtime is %s\n", 
+				LogReporter.millisToHuman(getAverageRuntime(list2)));
+		
+	}
+	
+	public static void experiment6b () {
+		System.out.println("Experiment 6b results");
+		System.out.println("These are the N experiment results");
+
+		String directoryPath = "experiments/n_experiments/benchmark";
+		List<LogReporter> list = getLogReporters(getDirectoryContents(directoryPath));
+		list.get(0).printSummary();
+		System.out.printf("Benchmark Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list)));
 		
 		
-		String directoryPath1 = "experiments/l_experiments/benchmark";
+		String directoryPath1 = "experiments/n_experiments/experiment6.lb.equal.dummyroot_false";
 		List<LogReporter> list1 = getLogReporters(getDirectoryContents(directoryPath1));
 		list1.get(0).printSummary();
-		System.out.printf("Benchmark Average runtime is %s\n", 
+		System.out.printf("LB Equal Average runtime is %s\n", 
 				LogReporter.millisToHuman(getAverageRuntime(list1)));
 
 	}
